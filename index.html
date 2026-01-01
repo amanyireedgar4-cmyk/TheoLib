@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TheoLib — Knowledge Without Barriers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --panel:#12172a;
+  --accent:#4cc9f0;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* NAV */
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  background:#050814;
+}
+nav h2{margin:0;color:var(--accent)}
+nav a{
+  color:var(--text);
+  margin-left:18px;
+  text-decoration:none;
+  font-size:14px;
+}
+nav a:hover{color:var(--accent)}
+
+/* HERO */
+.hero{
+  padding:80px 20px;
+  text-align:center;
+}
+.hero h1{
+  font-size:42px;
+  background:linear-gradient(90deg,#4cc9f0,#b517f0);
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:glow 6s infinite alternate;
+}
+@keyframes glow{
+  0%{filter:drop-shadow(0 0 5px rgba(76,201,240,.3))}
+  100%{filter:drop-shadow(0 0 14px rgba(181,23,240,.6))}
+}
+.hero p{color:var(--muted)}
+
+.search input{
+  width:100%;
+  max-width:520px;
+  padding:14px;
+  border-radius:30px;
+  border:none;
+  font-size:16px;
+  margin-top:25px;
+}
+
+/* LIBRARY */
+section{
+  max-width:1200px;
+  margin:auto;
+  padding:40px 20px;
+}
+.lib-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+  margin-bottom:50px;
+}
+.book-card{
+  background:var(--panel);
+  padding:20px;
+  border-radius:16px;
+  transition:.3s;
+}
+.book-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+.book-card p{color:var(--muted);font-size:14px}
+.book-card a{color:var(--accent);text-decoration:none}
+
+footer{
+  background:#050814;
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+<nav>
+  <h2>TheoLib</h2>
+  <div>
+    <a href="index.html">Home</a>    
+    <a href="ai.html">AI Research</a>
+    <a href="library.html">Library</a>
+    <a href="community.html">Community</a>
+    <a href="publish.html">Publish</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Knowledge Without Barriers</h1>
+  <p>A free, organized digital library for students and thinkers.</p>
+
+  <div class="search">
+    <input
+      id="searchInput"
+      placeholder="Search books, authors, topics…"
+      onkeyup="searchLibrary()">
+  </div>
+</div>
+
+<section id="library">
+
+<h2>📘 Study & Academics</h2>
+<div class="lib-grid">
+  <div class="book-card" data-search="brief history of time hawking physics cosmology">
+    <h4>A Brief History of Time</h4>
+    <p>Stephen Hawking</p>
+    <a href="https://en.wikipedia.org/wiki/A_Brief_History_of_Time" target="_blank">View</a>
+  </div>
+
+  <div class="book-card" data-search="sapiens harari history evolution">
+    <h4>Sapiens</h4>
+    <p>Yuval Noah Harari</p>
+    <a href="https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind" target="_blank">View</a>
+  </div>
+</div>
+
+<h2>📖 Literature</h2>
+<div class="lib-grid">
+  <div class="book-card" data-search="1984 orwell dystopia">
+    <h4>1984</h4>
+    <p>George Orwell</p>
+    <a href="https://en.wikipedia.org/wiki/Nineteen_Eighty-Four" target="_blank">View</a>
+  </div>
+
+  <div class="book-card" data-search="animal farm orwell politics allegory">
+    <h4>Animal Farm</h4>
+    <p>George Orwell</p>
+    <a href="https://en.wikipedia.org/wiki/Animal_Farm" target="_blank">View</a>
+  </div>
+</div>
+
+</section>
+
+<footer>
+TheoLib © 2026 · Knowledge is a human right
+</footer>
+<script>
+function searchLibrary(){
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".book-card");
+
+  cards.forEach(card=>{
+    const text = card.getAttribute("data-search");
+    if(text.includes(input)){
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+</script>
+
+</body>
+</html>

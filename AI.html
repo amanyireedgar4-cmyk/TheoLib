@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TheoLib AI Research</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --panel:#12172a;
+  --accent:#4cc9f0;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+}
+
+body{
+  margin:0;
+  font-family:Inter, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  background:#050814;
+}
+nav h2{color:var(--accent);margin:0}
+nav a{
+  color:var(--text);
+  margin-left:18px;
+  text-decoration:none;
+  font-size:14px;
+}
+nav a:hover{color:var(--accent)}
+
+.hero{
+  text-align:center;
+  padding:70px 20px;
+  max-width:900px;
+  margin:auto;
+}
+.hero h1{font-size:40px;margin-bottom:12px}
+.hero p{color:var(--muted);font-size:18px}
+
+.ask{
+  margin-top:30px;
+}
+.ask textarea{
+  width:100%;
+  max-width:700px;
+  height:120px;
+  padding:15px;
+  border-radius:16px;
+  border:none;
+  font-size:16px;
+}
+.ask button{
+  margin-top:15px;
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  font-size:15px;
+  background:var(--accent);
+  cursor:pointer;
+}
+.ask button:hover{opacity:0.9}
+
+section{
+  max-width:900px;
+  margin:auto;
+  padding:50px 20px;
+}
+
+.result{
+  background:var(--panel);
+  padding:25px;
+  border-radius:16px;
+}
+.result h3{color:var(--accent)}
+.result p{color:var(--muted);line-height:1.6}
+
+.sources{
+  margin-top:20px;
+}
+.sources li{
+  color:var(--text);
+  font-size:14px;
+}
+
+footer{
+  background:#050814;
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+</style>
+</head>
+<script>
+function runResearch(){
+  const question = document.querySelector("textarea").value.toLowerCase();
+  const output = document.querySelector(".result");
+
+  let response = "";
+  let sources = "";
+
+  if(question.includes("time")){
+    response = `
+      <p>
+        The <strong>arrow of time</strong> explains why time appears to move only forward.
+        While most physical laws are reversible, real-world processes such as entropy,
+        memory formation, and aging only move in one direction.
+      </p>
+      <p>
+        In physics, this is tied to thermodynamics. In philosophy, it raises deep questions
+        about causality, free will, and whether the future already exists.
+      </p>
+    `;
+
+    sources = `
+      <li><strong>The Arrow of Time</strong> — Peter Coveney (Study & Academics)</li>
+      <li><strong>A Brief History of Time</strong> — Stephen Hawking (Literature)</li>
+      <li><strong>Philosophy of Time</strong> — Research Essays Collection</li>
+    `;
+  }
+
+  else if(question.includes("ai") || question.includes("artificial")){
+    response = `
+      <p>
+        Artificial Intelligence refers to systems designed to perform tasks that normally
+        require human intelligence, such as reasoning, learning, and pattern recognition.
+      </p>
+      <p>
+        Modern AI is data-driven and raises ethical, social, and philosophical concerns
+        about autonomy, bias, and human purpose.
+      </p>
+    `;
+
+    sources = `     
+      <li><strong>Artificial Intelligence: A Modern Approach</strong> — Russell & Norvig</li>
+      <li><strong>Life 3.0</strong> — Max Tegmark</li>
+      <li><strong>AI Ethics Papers</strong> — Research & Essays</li>
+    `;
+  }
+
+  else{
+    response = `
+      <p>
+        This topic touches multiple disciplines. To research it properly, TheoLib suggests
+        breaking the question into smaller parts and exploring related fields.
+      </p>
+      <p>
+        The AI assistant will guide you through verified resources in the library rather
+        than giving shallow answers.
+      </p>
+    `;
+
+    sources = `
+      <li><strong>General Research Methods</strong> — Study & Academics</li>
+      <li><strong>Critical Thinking Essays</strong> — Research & Essays</li>
+    `;
+  }
+
+  output.innerHTML = `
+    <h3>Research Summary</h3>
+    ${response}
+    <div class="sources">
+      <h4>Recommended Library Resources</h4>
+      <ul>${sources}</ul>
+    </div>
+  `;
+}
+</script>
+<script>
+function askTheo(){
+  const q = document.getElementById("aiQuestion").value;
+  const out = document.getElementById("aiOutput");
+
+  if(!q){
+    out.innerHTML="Please enter a question.";
+    return;
+  }
+
+  out.innerHTML = "Analyzing TheoLib sources…<br><br>";
+
+  setTimeout(()=>{
+    out.innerHTML =
+      "<strong>Summary:</strong><br>" +
+      "The arrow of time refers to the one-directional flow of time from past to future. " +
+      "In physics, it is linked to entropy — the tendency of systems to move toward disorder.<br><br>" +
+      "<strong>Key Areas:</strong><ul>" +
+      "<li>Thermodynamics (entropy)</li>" +
+      "<li>Cosmology (expanding universe)</li>" +
+      "<li>Human perception of time</li></ul>" +
+      "<em>Sources referenced from TheoLib library.</em>";
+  },1200);
+}
+</script>
+
+<body>
+
+<nav>
+  <h2>TheoLib</h2>
+  <div>
+    <a href="index.html">Home</a>    
+    <a href="AI.html">AI Research</a>
+    <a href="library.html">Library</a>
+    <a href="community.html">Community</a>
+    <a href="publish.html">Publish</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>AI Research Assistant</h1>
+  <p>Ask complex questions. Get clear explanations. Discover the right books.</p>
+
+  <div class="ask">
+    <textarea placeholder="Example: I need information about the arrow of time and why it matters in physics and philosophy."></textarea><br>
+    <button onclick="runResearch()">Run Research</button>
+  </div>
+</div>
+
+<section>
+  <div class="result">
+    <h3>Research Summary (Example Output)</h3>
+
+    <p>
+      The <strong>arrow of time</strong> refers to the one-directional flow of time from past to future.
+      Although physical laws often work both forward and backward, real-world processes—such as aging,
+      memory, and entropy—increase in only one direction.
+    </p>
+
+    <p>
+      In physics, this concept is closely linked to the <strong>second law of thermodynamics</strong>,
+      which states that entropy (disorder) tends to increase. In philosophy, the arrow of time raises
+      questions about causality, free will, and the nature of existence.
+    </p>
+
+    <p>
+      Understanding the arrow of time helps connect physics, cosmology, and human experience into one
+      coherent framework.
+    </p>
+
+    <div class="sources">
+      <h4>Recommended Library Resources</h4>
+      <ul>
+        <li><strong>The Arrow of Time</strong> — Peter Coveney (Physics & Cosmology)</li>
+        <li><strong>A Brief History of Time</strong> — Stephen Hawking (Conceptual overview)</li>
+        <li><strong>Philosophy of Time</strong> — Research Essays Collection</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section class="ai-panel">
+  <h2>🤖 Ask TheoLib AI</h2>
+  <p style="color:#9ca3af">
+    Ask a research question. TheoLib scans its knowledge base and responds.
+  </p>
+
+  <input class="ai-input" id="aiQuestion"
+    placeholder="e.g. Explain the arrow of time">
+
+  <button class="ai-btn" onclick="askTheo()">Ask</button>
+
+  <div class="ai-output" id="aiOutput">
+    Waiting for your question…
+  </div>
+</section>
+<footer>
+  TheoLib AI · Research guided by library knowledge · Transparent & ethical
+</footer>
+
+</body>
+</html>
