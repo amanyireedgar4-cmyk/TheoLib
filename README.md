@@ -1,2 +1,0 @@
-# TheoLib
-Knowledge Without Barriers
