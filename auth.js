@@ -1,53 +1,41 @@
 import { auth, db } from "./firebase.js";
-
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
   doc,
-  setDoc,
-  serverTimestamp
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const msg = document.getElementById("msg");
+window.signup = async function () {
+  const email = prompt("Email:");
+  const password = prompt("Password:");
 
-document.getElementById("signupBtn").addEventListener("click", async () => {
-  try {
-    const res = await createUserWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-    await setDoc(doc(db, "users", res.user.uid), {
-      email: res.user.email,
-      role: "reader",
-      createdAt: serverTimestamp()
-    });
+  await setDoc(doc(db, "users", cred.user.uid), {
+    email: email,
+    joinedAt: new Date(),
+    booksRead: []
+  });
 
-    msg.innerText = "Signup successful!";
-    window.location.href = "index.html";
-  } catch (err) {
-    msg.innerText = err.message;
-  }
-});
+  alert("Account created ✅");
+};
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
+window.login = async function () {
+  const email = prompt("Email:");
+  const password = prompt("Password:");
 
-    msg.innerText = "Login successful!";
-    window.location.href = "index.html";
-  } catch (err) {
-    msg.innerText = err.message;
+  await signInWithEmailAndPassword(auth, email, password);
+  alert("Logged in ✅");
+};
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    console.log("Logged in as:", user.email);
   }
 });
 
