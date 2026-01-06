@@ -76,6 +76,17 @@ h3{margin-top:60px}
   transform:translateY(-6px);
   box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
+
+.category{
+  display:inline-block;
+  background:#1f2937;
+  color:var(--muted);
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:6px;
+  margin-bottom:8px;
+}
+
 .book-card img{
   width:100%;
   height:300px;
@@ -83,12 +94,23 @@ h3{margin-top:60px}
   border-radius:10px;
   margin-bottom:12px;
 }
+
 .book-card h4{margin:0 0 6px}
-.book-card p{color:var(--muted);font-size:14px;margin:0 0 10px}
-.book-card a{
-  color:var(--accent);
-  text-decoration:none;
+.book-card p{
+  color:var(--muted);
   font-size:14px;
+  margin:0 0 12px;
+}
+
+.book-card a{
+  display:inline-block;
+  background:var(--accent);
+  color:#000;
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  text-decoration:none;
 }
 
 footer{
@@ -100,7 +122,9 @@ footer{
 }
 </style>
 </head>
+
 <body>
+
 <nav>
   <h2>TheoLib</h2>
   <div>
@@ -128,6 +152,7 @@ Free access to humanity’s most important books.
 <div class="lib-grid">
 
 <div class="book-card" data-search="three musketeers dumas adventure">
+<span class="category">Literature</span>
 <img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
 <h4>The Three Musketeers</h4>
 <p>Alexandre Dumas</p>
@@ -135,6 +160,7 @@ Free access to humanity’s most important books.
 </div>
 
 <div class="book-card" data-search="count monte cristo dumas revenge">
+<span class="category">Literature</span>
 <img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
 <h4>The Count of Monte Cristo</h4>
 <p>Alexandre Dumas</p>
@@ -142,6 +168,7 @@ Free access to humanity’s most important books.
 </div>
 
 <div class="book-card" data-search="dracula stoker vampire gothic">
+<span class="category">Literature</span>
 <img src="https://covers.openlibrary.org/b/id/8228691-L.jpg">
 <h4>Dracula</h4>
 <p>Bram Stoker</p>
@@ -149,6 +176,7 @@ Free access to humanity’s most important books.
 </div>
 
 <div class="book-card" data-search="frankenstein shelley science horror">
+<span class="category">Literature</span>
 <img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
 <h4>Frankenstein</h4>
 <p>Mary Shelley</p>
@@ -156,6 +184,7 @@ Free access to humanity’s most important books.
 </div>
 
 <div class="book-card" data-search="sherlock holmes doyle detective">
+<span class="category">Literature</span>
 <img src="https://covers.openlibrary.org/b/id/8225265-L.jpg">
 <h4>Sherlock Holmes</h4>
 <p>Arthur Conan Doyle</p>
@@ -166,91 +195,4 @@ Free access to humanity’s most important books.
 
 <!-- 📘 STUDY & THINKING -->
 <h3>📘 Study & Thinking</h3>
-<div class="lib-grid">
-
-<div class="book-card" data-search="wealth of nations adam smith economics">
-<img src="https://covers.openlibrary.org/b/id/7222246-L.jpg">
-<h4>The Wealth of Nations</h4>
-<p>Adam Smith</p>
-<a href="https://www.gutenberg.org/ebooks/3300" target="_blank">Read Free</a>
-</div>
-
-<div class="book-card" data-search="origin of species darwin evolution">
-<img src="https://covers.openlibrary.org/b/id/7222161-L.jpg">
-<h4>On the Origin of Species</h4>
-<p>Charles Darwin</p>
-<a href="https://www.gutenberg.org/ebooks/2009" target="_blank">Read Free</a>
-</div>
-
-<div class="book-card" data-search="republic plato philosophy">
-<img src="https://covers.openlibrary.org/b/id/8234722-L.jpg">
-<h4>The Republic</h4>
-<p>Plato</p>
-<a href="https://www.gutenberg.org/ebooks/1497" target="_blank">Read Free</a>
-</div>
-
-</div>
-
-</section>
-
-<footer>
-TheoLib © 2026 · Knowledge is a human right
-</footer>
-
-<script>
-function searchLibrary(){
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  document.querySelectorAll(".book-card").forEach(card=>{
-    card.style.display = card.dataset.search.includes(input) ? "block" : "none";
-  });
-}
-</script>
- <script src="firebase.js"></script>
-        <script type="module" src="trackjs"></script>
-
-<script>
-function searchHome(){
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const cards = document.querySelectorAll(".book-card");
-
-  cards.forEach(card=>{
-    const text = card.getAttribute("data-search");
-    card.style.display = text.includes(input) ? "block" : "none";
-  });
-}
-</script>
-<script>
-function showSignup(){
-  const email = prompt("Email:");
-  const password = prompt("Password:");
-
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(userCred => {
-      const user = userCred.user;
-      return db.collection("users").doc(user.uid).set({
-        email: user.email,
-        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        booksRead: []
-      });
-    })
-    .then(()=>{
-      alert("Account created 🎉");
-    })
-    .catch(err => alert(err.message));
-}
-
-function showLogin(){
-  const email = prompt("Email:");
-  const password = prompt("Password:");
-
-  auth.signInWithEmailAndPassword(email, password)
-    .then(()=> alert("Logged in ✅"))
-    .catch(err => alert(err.message));
-}
-</script>
-</body>
-</html>
-
-
-
-
+<div class="lib-
