@@ -119,6 +119,11 @@ footer{
     <a href="publish.html">Publish</a>
     <a href="about.html">About</a>
   </div>
+        <div id="authArea" style="margin-left:20px">
+  <button onclick="showSignup()">Sign up</button>
+  <button onclick="showLogin()">Login</button>
+</div>
+
 </nav>
 
 <div class="hero">
@@ -186,8 +191,38 @@ function searchHome(){
   });
 }
 </script>
+<script>
+function showSignup(){
+  const email = prompt("Email:");
+  const password = prompt("Password:");
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(userCred => {
+      const user = userCred.user;
+      return db.collection("users").doc(user.uid).set({
+        email: user.email,
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        booksRead: []
+      });
+    })
+    .then(()=>{
+      alert("Account created 🎉");
+    })
+    .catch(err => alert(err.message));
+}
+
+function showLogin(){
+  const email = prompt("Email:");
+  const password = prompt("Password:");
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(()=> alert("Logged in ✅"))
+    .catch(err => alert(err.message));
+}
+</script>
 
 </body>
 </html>
+
 
 
