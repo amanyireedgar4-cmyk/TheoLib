@@ -63,7 +63,6 @@ h3{margin-top:60px}
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:22px;
-  margin-top:20px;
 }
 
 .book-card{
@@ -76,17 +75,6 @@ h3{margin-top:60px}
   transform:translateY(-6px);
   box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
-
-.category{
-  display:inline-block;
-  background:#1f2937;
-  color:var(--muted);
-  font-size:12px;
-  padding:4px 8px;
-  border-radius:6px;
-  margin-bottom:8px;
-}
-
 .book-card img{
   width:100%;
   height:300px;
@@ -94,23 +82,12 @@ h3{margin-top:60px}
   border-radius:10px;
   margin-bottom:12px;
 }
-
 .book-card h4{margin:0 0 6px}
-.book-card p{
-  color:var(--muted);
-  font-size:14px;
-  margin:0 0 12px;
-}
-
+.book-card p{color:var(--muted);font-size:14px;margin:0 0 10px}
 .book-card a{
-  display:inline-block;
-  background:var(--accent);
-  color:#000;
-  padding:8px 14px;
-  border-radius:8px;
-  font-size:14px;
-  font-weight:600;
+  color:var(--accent);
   text-decoration:none;
+  font-size:14px;
 }
 
 footer{
@@ -135,9 +112,6 @@ footer{
     <a href="publish.html">Publish</a>
     <a href="about.html">About</a>
   </div>
-        <a href="#" onclick="signup()">Sign Up</a>
-<a href="#" onclick="login()">Login</a>
-
 </nav>
 
 <section>
@@ -147,7 +121,7 @@ Free access to humanity’s most important books.
 </p>
 
 <div class="search">
-<input id="searchInput" placeholder="Search books, authors, topics…" onkeyup="searchLibrary()">
+  <input id="searchInput" placeholder="Search books, authors, topics…" onkeyup="searchLibrary()">
 </div>
 
 <!-- 📖 LITERATURE -->
@@ -155,48 +129,96 @@ Free access to humanity’s most important books.
 <div class="lib-grid">
 
 <div class="book-card" data-search="three musketeers dumas adventure">
-<span class="category">Literature</span>
-<img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
-<h4>The Three Musketeers</h4>
-<p>Alexandre Dumas</p>
-<a href="https://www.gutenberg.org/ebooks/1257" target="_blank">Read Free</a>
+  <img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
+  <h4>The Three Musketeers</h4>
+  <p>Alexandre Dumas</p>
+  <a href="#" onclick="readBook(
+    'The Three Musketeers',
+    'Alexandre Dumas',
+    'https://www.gutenberg.org/ebooks/1257'
+  )">Read Free</a>
 </div>
 
-<div class="book-card" data-search="count monte cristo dumas revenge">
-<span class="category">Literature</span>
-<img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
-<h4>The Count of Monte Cristo</h4>
-<p>Alexandre Dumas</p>
-<a href="https://www.gutenberg.org/ebooks/1184" target="_blank">Read Free</a>
+<div class="book-card" data-search="dracula stoker gothic">
+  <img src="https://covers.openlibrary.org/b/id/8228691-L.jpg">
+  <h4>Dracula</h4>
+  <p>Bram Stoker</p>
+  <a href="#" onclick="readBook(
+    'Dracula',
+    'Bram Stoker',
+    'https://www.gutenberg.org/ebooks/345'
+  )">Read Free</a>
 </div>
 
-<div class="book-card" data-search="dracula stoker vampire gothic">
-<span class="category">Literature</span>
-<img src="https://covers.openlibrary.org/b/id/8228691-L.jpg">
-<h4>Dracula</h4>
-<p>Bram Stoker</p>
-<a href="https://www.gutenberg.org/ebooks/345" target="_blank">Read Free</a>
-</div>
-
-<div class="book-card" data-search="frankenstein shelley science horror">
-<span class="category">Literature</span>
-<img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
-<h4>Frankenstein</h4>
-<p>Mary Shelley</p>
-<a href="https://www.gutenberg.org/ebooks/84" target="_blank">Read Free</a>
-</div>
-
-<div class="book-card" data-search="sherlock holmes doyle detective">
-<span class="category">Literature</span>
-<img src="https://covers.openlibrary.org/b/id/8225265-L.jpg">
-<h4>Sherlock Holmes</h4>
-<p>Arthur Conan Doyle</p>
-<a href="https://www.gutenberg.org/ebooks/1661" target="_blank">Read Free</a>
+<div class="book-card" data-search="frankenstein shelley science">
+  <img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
+  <h4>Frankenstein</h4>
+  <p>Mary Shelley</p>
+  <a href="#" onclick="readBook(
+    'Frankenstein',
+    'Mary Shelley',
+    'https://www.gutenberg.org/ebooks/84'
+  )">Read Free</a>
 </div>
 
 </div>
+</section>
 
-<!-- 📘 STUDY & THINKING -->
-<h3>📘 Study & Thinking</h3>
-<div class="lib-
+<footer>
+TheoLib © 2026 · Knowledge is a human right
+</footer>
+
+<script>
+function searchLibrary(){
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll(".book-card").forEach(card=>{
+    card.style.display = card.dataset.search.includes(input) ? "block" : "none";
+  });
+}
+</script>
+
+<!-- 🔥 FIREBASE + READ TRACKING -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, updateDoc, arrayUnion, serverTimestamp }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7LjxapWLQCW_zLRCOZS25hWVEaOG1mFY",
+  authDomain: "theolib-426cf.firebaseapp.com",
+  projectId: "theolib-426cf",
+  storageBucket: "theolib-426cf.firebasestorage.app",
+  messagingSenderId: "879359514394",
+  appId: "1:879359514394:web:259ad5ed2e8949e2e97ea3"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.readBook = async (title, author, link) => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please log in to read books 📚");
+    return;
+  }
+
+  await updateDoc(doc(db,"users",user.uid),{
+    booksRead: arrayUnion({
+      title,
+      author,
+      link,
+      readAt: serverTimestamp()
+    })
+  });
+
+  window.open(link,"_blank");
+};
+</script>
+
+</body>
+</html>
+
+
 
