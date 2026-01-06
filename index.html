@@ -124,6 +124,18 @@ footer{
   <button onclick="showLogin()">Login</button>
 </div>
 </nav>
+<p id="userStatus"></p>
+
+<script type="module">
+  import { auth } from "./firebase.js";
+  import { onAuthStateChanged } from
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  onAuthStateChanged(auth, (user) => {
+    document.getElementById("userStatus").innerText =
+      user ? `Logged in as ${user.email}` : "Guest";
+  });
+</script>
 
 <div class="hero">
   <h1>Knowledge Without Barriers</h1>
@@ -212,6 +224,7 @@ function showLogin(){
 
 </body>
 </html>
+
 
 
 
