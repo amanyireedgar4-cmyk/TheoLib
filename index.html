@@ -182,7 +182,9 @@ footer{
 <footer>
 TheoLib © 2026 · Knowledge is a human right
 </footer>
- <script src="firebase.js"></script>
+<script type="module" src="firebase.js"></script>
+<script type="module" src="auth.js"></script>
+
 <script>
 function searchHome(){
   const input = document.getElementById("searchInput").value.toLowerCase();
@@ -226,6 +228,7 @@ function showLogin(){
 
 </body>
 </html>
+
 
 
 
