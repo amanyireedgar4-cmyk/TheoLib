@@ -184,18 +184,6 @@ TheoLib © 2026 · Knowledge is a human right
 </footer>
 <script type="module" src="firebase.js"></script>
 <script type="module" src="auth.js"></script>
-
-<script>
-function searchHome(){
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  const cards = document.querySelectorAll(".book-card");
-
-  cards.forEach(card=>{
-    const text = card.getAttribute("data-search");
-    card.style.display = text.includes(input) ? "block" : "none";
-  });
-}
-</script>
 <script>
 function showSignup(){
   const email = prompt("Email:");
@@ -228,6 +216,7 @@ function showLogin(){
 
 </body>
 </html>
+
 
 
 
