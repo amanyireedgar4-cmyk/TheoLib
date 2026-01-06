@@ -205,8 +205,49 @@ function searchLibrary(){
   });
 }
 </script>
-<script src="firebase.js"></script>
+ <script src="firebase.js"></script>
+<script>
+function searchHome(){
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".book-card");
+
+  cards.forEach(card=>{
+    const text = card.getAttribute("data-search");
+    card.style.display = text.includes(input) ? "block" : "none";
+  });
+}
+</script>
+<script>
+function showSignup(){
+  const email = prompt("Email:");
+  const password = prompt("Password:");
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(userCred => {
+      const user = userCred.user;
+      return db.collection("users").doc(user.uid).set({
+        email: user.email,
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        booksRead: []
+      });
+    })
+    .then(()=>{
+      alert("Account created 🎉");
+    })
+    .catch(err => alert(err.message));
+}
+
+function showLogin(){
+  const email = prompt("Email:");
+  const password = prompt("Password:");
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(()=> alert("Logged in ✅"))
+    .catch(err => alert(err.message));
+}
+</script>
 </body>
 </html>
+
 
 
