@@ -1,4 +1,5 @@
 import { auth, db } from "./firebase.js";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
@@ -14,7 +15,7 @@ const email = document.getElementById("email");
 const password = document.getElementById("password");
 const msg = document.getElementById("msg");
 
-document.getElementById("signupBtn").onclick = async () => {
+document.getElementById("signupBtn").addEventListener("click", async () => {
   try {
     const res = await createUserWithEmailAndPassword(
       auth,
@@ -22,7 +23,6 @@ document.getElementById("signupBtn").onclick = async () => {
       password.value
     );
 
-    // create Firestore user document
     await setDoc(doc(db, "users", res.user.uid), {
       email: res.user.email,
       role: "reader",
@@ -34,19 +34,22 @@ document.getElementById("signupBtn").onclick = async () => {
   } catch (err) {
     msg.innerText = err.message;
   }
-};
+});
 
-document.getElementById("loginBtn").onclick = async () => {
+document.getElementById("loginBtn").addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(
       auth,
       email.value,
       password.value
     );
+
     msg.innerText = "Login successful!";
     window.location.href = "index.html";
   } catch (err) {
     msg.innerText = err.message;
   }
-};
+});
 
+
+   
