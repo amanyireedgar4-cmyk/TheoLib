@@ -109,62 +109,68 @@ function runResearch(){
   const output = document.querySelector(".result");
 
   let response = "";
-  let sources = "";
+  let books = "";
 
   if(question.includes("time")){
     response = `
       <p>
-        The <strong>arrow of time</strong> explains why time appears to move only forward.
-        While most physical laws are reversible, real-world processes such as entropy,
-        memory formation, and aging only move in one direction.
-      </p>
-      <p>
-        In physics, this is tied to thermodynamics. In philosophy, it raises deep questions
-        about causality, free will, and whether the future already exists.
+        The <strong>arrow of time</strong> explains why time moves forward.
+        It is linked to entropy in physics and causality in philosophy.
       </p>
     `;
 
-    sources = `
-      <li><strong>The Arrow of Time</strong> — Peter Coveney (Study & Academics)</li>
-      <li><strong>A Brief History of Time</strong> — Stephen Hawking (Literature)</li>
-      <li><strong>Philosophy of Time</strong> — Research Essays Collection</li>
+    books = `
+      <ul>
+        <li>
+          <strong>A Brief History of Time</strong> — Stephen Hawking<br>
+          <small>An accessible explanation of time, cosmology, and entropy.</small><br>
+          <a href="library.html">View in Library</a>
+        </li><br>
+
+        <li>
+          <strong>The Arrow of Time</strong> — Peter Coveney<br>
+          <small>Explores why time has direction in physical systems.</small><br>
+          <a href="library.html">View in Library</a>
+        </li>
+      </ul>
     `;
   }
 
-  else if(question.includes("ai") || question.includes("artificial")){
+  else if(question.includes("ai")){
     response = `
       <p>
-        Artificial Intelligence refers to systems designed to perform tasks that normally
-        require human intelligence, such as reasoning, learning, and pattern recognition.
-      </p>
-      <p>
-        Modern AI is data-driven and raises ethical, social, and philosophical concerns
-        about autonomy, bias, and human purpose.
+        Artificial Intelligence studies how machines can simulate human reasoning,
+        learning, and decision-making.
       </p>
     `;
 
-    sources = `     
-      <li><strong>Artificial Intelligence: A Modern Approach</strong> — Russell & Norvig</li>
-      <li><strong>Life 3.0</strong> — Max Tegmark</li>
-      <li><strong>AI Ethics Papers</strong> — Research & Essays</li>
+    books = `
+      <ul>
+        <li>
+          <strong>Artificial Intelligence: A Modern Approach</strong><br>
+          <small>The standard academic introduction to AI.</small><br>
+          <a href="library.html">View in Library</a>
+        </li>
+      </ul>
     `;
   }
 
   else{
     response = `
       <p>
-        This topic touches multiple disciplines. To research it properly, TheoLib suggests
-        breaking the question into smaller parts and exploring related fields.
-      </p>
-      <p>
-        The AI assistant will guide you through verified resources in the library rather
-        than giving shallow answers.
+        This topic connects to multiple disciplines.
+        TheoLib recommends starting with foundational texts.
       </p>
     `;
 
-    sources = `
-      <li><strong>General Research Methods</strong> — Study & Academics</li>
-      <li><strong>Critical Thinking Essays</strong> — Research & Essays</li>
+    books = `
+      <ul>
+        <li>
+          <strong>General Research Methods</strong><br>
+          <small>Learn how to approach complex topics systematically.</small><br>
+          <a href="library.html">View in Library</a>
+        </li>
+      </ul>
     `;
   }
 
@@ -172,35 +178,10 @@ function runResearch(){
     <h3>Research Summary</h3>
     ${response}
     <div class="sources">
-      <h4>Recommended Library Resources</h4>
-      <ul>${sources}</ul>
+      <h4>Recommended Books</h4>
+      ${books}
     </div>
   `;
-}
-</script>
-<script>
-function askTheo(){
-  const q = document.getElementById("aiQuestion").value;
-  const out = document.getElementById("aiOutput");
-
-  if(!q){
-    out.innerHTML="Please enter a question.";
-    return;
-  }
-
-  out.innerHTML = "Analyzing TheoLib sources…<br><br>";
-
-  setTimeout(()=>{
-    out.innerHTML =
-      "<strong>Summary:</strong><br>" +
-      "The arrow of time refers to the one-directional flow of time from past to future. " +
-      "In physics, it is linked to entropy — the tendency of systems to move toward disorder.<br><br>" +
-      "<strong>Key Areas:</strong><ul>" +
-      "<li>Thermodynamics (entropy)</li>" +
-      "<li>Cosmology (expanding universe)</li>" +
-      "<li>Human perception of time</li></ul>" +
-      "<em>Sources referenced from TheoLib library.</em>";
-  },1200);
 }
 </script>
 
@@ -280,5 +261,6 @@ function askTheo(){
 
 </body>
 </html>
+
 
 
