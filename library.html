@@ -1,228 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>TheoLib Library — Knowledge Without Barriers</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script data-goatcounter="https://theolib.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
-
-<style>
-:root{
-  --bg:#0b0f1a;
-  --panel:#12172a;
-  --accent:#4cc9f0;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter, Arial, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 28px;
-  background:#050814;
-}
-nav h2{margin:0;color:var(--accent)}
-nav a{
-  color:var(--text);
-  margin-left:18px;
-  text-decoration:none;
-  font-size:14px;
-}
-nav a:hover{color:var(--accent)}
-
-section{
-  padding:60px 20px;
-  max-width:1200px;
-  margin:auto;
-}
-h2{text-align:center;color:var(--accent)}
-h3{margin-top:60px}
-
-.search{
-  max-width:600px;
-  margin:30px auto;
-}
-.search input{
-  width:100%;
-  padding:14px 20px;
-  border-radius:30px;
-  border:none;
-  font-size:16px;
-}
-
-.lib-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px;
-}
-
-.book-card{
-  background:var(--panel);
-  padding:18px;
-  border-radius:16px;
-  transition:.3s;
-}
-.book-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
-}
-.book-card img{
-  width:100%;
-  height:300px;
-  object-fit:cover;
-  border-radius:10px;
-  margin-bottom:12px;
-}
-.book-card h4{margin:0 0 6px}
-.book-card p{color:var(--muted);font-size:14px;margin:0 0 10px}
-.book-card a{
-  color:var(--accent);
-  text-decoration:none;
-  font-size:14px;
-}
-
-footer{
-  background:#050814;
-  padding:30px;
-  text-align:center;
-  color:var(--muted);
-  font-size:13px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>TheoLib Library</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<nav>
-  <h2>TheoLib</h2>
-  <div>
+<header>
+  <h1>TheoLib Library</h1>
+  <nav>
     <a href="index.html">Home</a>
     <a href="library.html">Library</a>
-    <a href="AI.html">AI Research</a>
-    <a href="community.html">Community</a>
-    <a href="publish.html">Publish</a>
-    <a href="about.html">About</a>
-  </div>
-        <a href="dashboard.html">My Library</a>
-</nav>
-<a href="auth.html">Login</a>
+    <a href="auth.html" id="authLink">Login</a>
+  </nav>
+</header>
 
 <section>
-<h2>TheoLib Library</h2>
-<p style="text-align:center;color:var(--muted)">
-Free access to humanity’s most important books.
-</p>
-
-<div class="search">
-  <input id="searchInput" placeholder="Search books, authors, topics…" onkeyup="searchLibrary()">
-</div>
-
-<!-- 📖 LITERATURE -->
-<h3>📖 Literature</h3>
-<div class="lib-grid">
-
-<div class="book-card" data-search="three musketeers dumas adventure">
-  <img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
-  <h4>The Three Musketeers</h4>
-  <p>Alexandre Dumas</p>
-  <a href="#" onclick="readBook(
-    'The Three Musketeers',
-    'Alexandre Dumas',
-    'https://www.gutenberg.org/ebooks/1257'
-  )">Read Free</a>
-</div>
-
-<div class="book-card" data-search="dracula stoker gothic">
-  <img src="https://covers.openlibrary.org/b/id/8228691-L.jpg">
-  <h4>Dracula</h4>
-  <p>Bram Stoker</p>
-  <a href="#" onclick="readBook(
-    'Dracula',
-    'Bram Stoker',
-    'https://www.gutenberg.org/ebooks/345'
-  )">Read Free</a>
-</div>
-
-<div class="book-card" data-search="frankenstein shelley science">
-  <img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
-  <h4>Frankenstein</h4>
-  <p>Mary Shelley</p>
-  <a href="#" onclick="readBook(
-    'Frankenstein',
-    'Mary Shelley',
-    'https://www.gutenberg.org/ebooks/84'
-  )">Read Free</a>
-</div>
-
-</div>
+  <h2>📖 Free Books</h2>
+  <div id="freeBooks" class="books"></div>
 </section>
 
-<footer>
-TheoLib © 2026 · Knowledge is a human right
-</footer>
+<section>
+  <h2>🔒 Premium Books</h2>
+  <div id="premiumBooks" class="books"></div>
+</section>
 
-<script>
-function searchLibrary(){
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  document.querySelectorAll(".book-card").forEach(card=>{
-    card.style.display = card.dataset.search.includes(input) ? "block" : "none";
-  });
-}
-</script>
-
-<!-- 🔥 FIREBASE + READ TRACKING -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, updateDoc, arrayUnion, serverTimestamp }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC7LjxapWLQCW_zLRCOZS25hWVEaOG1mFY",
-  authDomain: "theolib-426cf.firebaseapp.com",
-  projectId: "theolib-426cf",
-  storageBucket: "theolib-426cf.firebasestorage.app",
-  messagingSenderId: "879359514394",
-  appId: "1:879359514394:web:259ad5ed2e8949e2e97ea3"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-window.readBook = async (title, author, link) => {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please log in to read books 📚");
-    return;
-  }
-
-  await updateDoc(doc(db,"users",user.uid),{
-    booksRead: arrayUnion({
-      title,
-      author,
-      link,
-      readAt: serverTimestamp()
-    })
-  });
-
-  window.open(link,"_blank");
-};
-</script>
-
+<script src="auth.js"></script>
+<script src="library.js"></script>
 </body>
 </html>
-
-
-
-
-
