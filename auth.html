@@ -1,26 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TheoLib – Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>TheoLib — Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script type="module" src="auth.js"></script>
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --panel:#12172a;
+  --accent:#4cc9f0;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+.card{
+  background:var(--panel);
+  padding:30px;
+  border-radius:16px;
+  width:100%;
+  max-width:380px;
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
+}
+
+h2{
+  text-align:center;
+  color:var(--accent);
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  border:none;
+  border-radius:10px;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:30px;
+  font-size:15px;
+  background:var(--accent);
+  cursor:pointer;
+}
+
+button:hover{opacity:.9}
+
+.switch{
+  margin-top:15px;
+  text-align:center;
+  font-size:14px;
+  color:var(--muted);
+}
+
+.switch span{
+  color:var(--accent);
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
-  <h2>TheoLib – Sign Up / Login</h2>
+<div class="card">
+  <h2 id="title">Login</h2>
 
-  <input type="email" id="email" placeholder="Email" />
-  <br><br>
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
 
-  <input type="password" id="password" placeholder="Password" />
-  <br><br>
+  <button onclick="handleAuth()">Continue</button>
 
-  <button id="signupBtn">Sign Up</button>
-  <button id="loginBtn">Login</button>
+  <div class="switch">
+    <span onclick="toggleMode()">Create account instead</span>
+  </div>
+</div>
 
-  <p id="msg"></p>
-
-  <script type="module" src="auth.js"></script>
 </body>
 </html>
-
