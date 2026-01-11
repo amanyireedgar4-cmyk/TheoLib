@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TheoLib Library</title>
+<title>TheoLib Library — Knowledge Without Barriers</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- GoatCounter Analytics -->
+<script data-goatcounter="https://theolib.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 
 <style>
 :root{
@@ -13,16 +17,13 @@
   --text:#e5e7eb;
   --muted:#9ca3af;
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:Inter, Arial, sans-serif;
   background:var(--bg);
   color:var(--text);
 }
-
 nav{
   display:flex;
   justify-content:space-between;
@@ -30,95 +31,82 @@ nav{
   padding:18px 28px;
   background:#050814;
 }
-
-nav h2{
-  margin:0;
-  color:var(--accent);
-}
-
+nav h2{margin:0;color:var(--accent)}
 nav a{
   color:var(--text);
-  text-decoration:none;
   margin-left:18px;
+  text-decoration:none;
   font-size:14px;
 }
 nav a:hover{color:var(--accent)}
 
-.container{
+section{
+  padding:60px 20px;
   max-width:1200px;
   margin:auto;
-  padding:40px 20px;
 }
+h2{text-align:center;color:var(--accent)}
+h3{margin-top:60px}
 
-h1{
-  text-align:center;
-  color:var(--accent);
+.search{
+  max-width:600px;
+  margin:30px auto;
 }
-
-.subtitle{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:40px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:24px;
-}
-
-.book{
-  background:var(--panel);
-  border-radius:16px;
-  padding:16px;
-  transition:.3s;
-}
-
-.book:hover{
-  transform:translateY(-6px);
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
-}
-
-.book img{
+.search input{
   width:100%;
-  height:300px;
-  object-fit:cover;
-  border-radius:12px;
-  margin-bottom:12px;
-}
-
-.book h3{
-  margin:0 0 6px;
+  padding:14px 20px;
+  border-radius:30px;
+  border:none;
   font-size:16px;
 }
 
-.book p{
-  margin:0 0 10px;
-  color:var(--muted);
-  font-size:14px;
+.lib-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;
+  margin-top:20px;
 }
 
-.book button{
+.book-card{
+  background:var(--panel);
+  padding:18px;
+  border-radius:16px;
+  transition:.3s;
+}
+.book-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+.book-card img{
   width:100%;
-  padding:10px;
-  border:none;
-  border-radius:8px;
+  height:300px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:12px;
+}
+.book-card h4{margin:0 0 6px}
+.book-card p{color:var(--muted);font-size:14px;margin:0 0 10px}
+
+.book-card a{
+  display:inline-block;
+  padding:8px 14px;
   background:var(--accent);
   color:#000;
-  cursor:pointer;
-  font-weight:bold;
+  border-radius:20px;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
 }
 
-.book.locked button{
-  background:#444;
-  color:#bbb;
+.locked a{
+  background:#555;
+  color:#fff;
 }
 
 footer{
   background:#050814;
-  text-align:center;
   padding:30px;
-  margin-top:60px;
+  text-align:center;
   color:var(--muted);
   font-size:13px;
 }
@@ -132,66 +120,107 @@ footer{
   <div>
     <a href="index.html">Home</a>
     <a href="library.html">Library</a>
+    <a href="AI.html">AI Research</a>
     <a href="community.html">Community</a>
+    <a href="publish.html">Publish</a>
     <a href="about.html">About</a>
   </div>
 </nav>
 
-<div class="container">
-  <h1>Library</h1>
-  <p class="subtitle">Explore knowledge — some books are free, others require login</p>
+<section>
+<h2>TheoLib Library</h2>
+<p style="text-align:center;color:var(--muted)">
+Free knowledge. Premium depth. One library.
+</p>
 
-  <div class="grid">
-
-    <!-- FREE BOOK -->
-    <div class="book">
-      <img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
-      <h3>The Three Musketeers</h3>
-      <p>Alexandre Dumas</p>
-      <button onclick="openBook()">Read Free</button>
-    </div>
-
-    <!-- FREE BOOK -->
-    <div class="book">
-      <img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
-      <h3>Frankenstein</h3>
-      <p>Mary Shelley</p>
-      <button onclick="openBook()">Read Free</button>
-    </div>
-
-    <!-- LOCKED BOOK -->
-    <div class="book locked">
-      <img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
-      <h3>The Count of Monte Cristo</h3>
-      <p>Alexandre Dumas</p>
-      <button onclick="requireLogin()">Login to Read</button>
-    </div>
-
-    <!-- LOCKED BOOK -->
-    <div class="book locked">
-      <img src="https://covers.openlibrary.org/b/id/8225265-L.jpg">
-      <h3>Sherlock Holmes</h3>
-      <p>Arthur Conan Doyle</p>
-      <button onclick="requireLogin()">Login to Read</button>
-    </div>
-
-  </div>
+<div class="search">
+<input id="searchInput" placeholder="Search books…" onkeyup="searchLibrary()">
 </div>
 
+<!-- 📖 FREE BOOKS -->
+<h3>🆓 Free Reads</h3>
+<div class="lib-grid">
+
+<div class="book-card" data-search="three musketeers dumas adventure">
+<img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
+<h4>The Three Musketeers</h4>
+<p>Alexandre Dumas</p>
+<a href="#"
+onclick="handleBookClick(
+  'The Three Musketeers',
+  'Alexandre Dumas',
+  'https://www.gutenberg.org/ebooks/1257',
+  'free'
+)">Read Free</a>
+</div>
+
+<div class="book-card" data-search="frankenstein shelley science">
+<img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
+<h4>Frankenstein</h4>
+<p>Mary Shelley</p>
+<a href="#"
+onclick="handleBookClick(
+  'Frankenstein',
+  'Mary Shelley',
+  'https://www.gutenberg.org/ebooks/84',
+  'free'
+)">Read Free</a>
+</div>
+
+</div>
+
+<!-- 🔒 MEMBERS ONLY -->
+<h3>🔒 Members Only</h3>
+<div class="lib-grid">
+
+<div class="book-card locked" data-search="count monte cristo dumas">
+<img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
+<h4>The Count of Monte Cristo</h4>
+<p>Alexandre Dumas</p>
+<a href="#"
+onclick="handleBookClick(
+  'The Count of Monte Cristo',
+  'Alexandre Dumas',
+  'https://www.gutenberg.org/ebooks/1184',
+  'locked'
+)">Unlock</a>
+</div>
+
+<div class="book-card locked" data-search="dracula stoker gothic">
+<img src="https://covers.openlibrary.org/b/id/8228691-L.jpg">
+<h4>Dracula</h4>
+<p>Bram Stoker</p>
+<a href="#"
+onclick="handleBookClick(
+  'Dracula',
+  'Bram Stoker',
+  'https://www.gutenberg.org/ebooks/345',
+  'locked'
+)">Unlock</a>
+</div>
+
+</div>
+
+</section>
+
 <footer>
-TheoLib © 2026 · Knowledge without barriers
+TheoLib © 2026 · Knowledge Without Barriers
 </footer>
 
+<!-- SEARCH -->
 <script>
-function openBook(){
-  alert("Opening free book 📖");
-}
-
-function requireLogin(){
-  alert("Please sign in or sign up to access this book 🔐");
-  window.location.href = "login.html";
+function searchLibrary(){
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll(".book-card").forEach(card=>{
+    card.style.display =
+      card.dataset.search.includes(input) ? "block" : "none";
+  });
 }
 </script>
+
+<!-- FIREBASE + LOGIC -->
+<script type="module" src="firebase.js"></script>
+<script type="module" src="library-logic.js"></script>
 
 </body>
 </html>
