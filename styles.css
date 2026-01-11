@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, Arial, sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+header {
+  background: #020617;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.4rem;
+  color: #38bdf8;
+}
+
+nav a {
+  color: #e5e7eb;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: #38bdf8;
+}
+
+section {
+  padding: 2rem;
+}
+
+section h2 {
+  margin-bottom: 1rem;
+  color: #fbbf24;
+}
+
+.books {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.2rem;
+}
+
+.book {
+  background: #020617;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.book:hover {
+  transform: translateY(-5px);
+}
+
+.book h3 {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.book a,
+.book button {
+  display: inline-block;
+  background: #38bdf8;
+  color: #020617;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  text-decoration: none;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.book a:hover,
+.book button:hover {
+  background: #0ea5e9;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+}
