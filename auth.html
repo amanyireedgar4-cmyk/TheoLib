@@ -80,18 +80,18 @@ button:hover{opacity:.9}
 <body>
 <button onclick="login(email.value)">Login</button>
 
-<div class="card">
-  <h2 id="title">Login</h2>
+<div class="auth-box">
+  <h2>Welcome to TheoLib</h2>
 
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
 
-  <button onclick="handleAuth()">Continue</button>
-
-  <div class="switch">
-    <span onclick="toggleMode()">Create account instead</span>
-  </div>
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Sign Up</button>
 </div>
+
+<script type="module" src="auth.js"></script>
+
 
 </body>
 </html>
