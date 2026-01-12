@@ -2,17 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TheoLib Library — Knowledge Without Barriers</title>
+<title>TheoLib — Library</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- GoatCounter Analytics -->
-<script data-goatcounter="https://theolib.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
 
 <style>
 :root{
   --bg:#0b0f1a;
   --panel:#12172a;
+  --card:#161b32;
   --accent:#4cc9f0;
   --text:#e5e7eb;
   --muted:#9ca3af;
@@ -20,210 +17,121 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Inter, Arial, sans-serif;
   background:var(--bg);
   color:var(--text);
+  font-family:Arial, sans-serif;
 }
-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 28px;
-  background:#050814;
+header{
+  padding:24px;
+  text-align:center;
 }
-nav h2{margin:0;color:var(--accent)}
-nav a{
-  color:var(--text);
-  margin-left:18px;
-  text-decoration:none;
-  font-size:14px;
+header h1{
+  margin:0;
+  color:var(--accent);
 }
-nav a:hover{color:var(--accent)}
-
-section{
-  padding:60px 20px;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:22px;
+  padding:20px;
   max-width:1200px;
   margin:auto;
 }
-h2{text-align:center;color:var(--accent)}
-h3{margin-top:60px}
-
-.search{
-  max-width:600px;
-  margin:30px auto;
-}
-.search input{
-  width:100%;
-  padding:14px 20px;
-  border-radius:30px;
-  border:none;
-  font-size:16px;
-}
-
-.lib-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px;
-  margin-top:20px;
-}
-
-.book-card{
-  background:var(--panel);
-  padding:18px;
+.book{
+  background:var(--card);
   border-radius:16px;
-  transition:.3s;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 12px 30px rgba(0,0,0,.4);
 }
-.book-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
-}
-.book-card img{
+.book img{
   width:100%;
-  height:300px;
+  height:220px;
   object-fit:cover;
-  border-radius:10px;
-  margin-bottom:12px;
 }
-.book-card h4{margin:0 0 6px}
-.book-card p{color:var(--muted);font-size:14px;margin:0 0 10px}
-
-.book-card a{
-  display:inline-block;
-  padding:8px 14px;
+.book .info{
+  padding:14px;
+  flex:1;
+}
+.book h3{
+  font-size:14px;
+  margin:0 0 6px;
+}
+.book p{
+  font-size:12px;
+  color:var(--muted);
+  margin:0 0 10px;
+}
+.book .actions{
+  display:flex;
+  gap:8px;
+}
+.book button{
+  flex:1;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  font-size:12px;
+  cursor:pointer;
+}
+.read{
   background:var(--accent);
   color:#000;
-  border-radius:20px;
-  text-decoration:none;
-  font-size:13px;
-  font-weight:600;
 }
-
-.locked a{
-  background:#555;
-  color:#fff;
+.save{
+  background:#1f2937;
+  color:var(--text);
 }
-
-footer{
-  background:#050814;
+.locked{
+  opacity:.6;
+}
+.login-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.login-popup .box{
+  background:var(--panel);
   padding:30px;
+  border-radius:18px;
   text-align:center;
-  color:var(--muted);
-  font-size:13px;
+  max-width:300px;
+}
+.login-popup button{
+  margin-top:16px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:var(--accent);
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<nav>
-  <h2>TheoLib</h2>
-  <div>
-    <a href="index.html">Home</a>
-    <a href="library.html">Library</a>
-    <a href="AI.html">AI Research</a>
-    <a href="community.html">Community</a>
-    <a href="publish.html">Publish</a>
-    <a href="about.html">About</a>
-    <a href="my-library.html">my library </a>    
+<header>
+  <h1>TheoLib Library</h1>
+  <p>Explore knowledge freely — unlock more with an account</p>
+</header>
+
+<div class="grid" id="library"></div>
+
+<div class="login-popup" id="loginPopup">
+  <div class="box">
+    <h3>Login Required</h3>
+    <p>You’ve used your 2 free reads</p>
+    <button onclick="location.href='auth.html'">Login / Sign Up</button>
   </div>
-</nav>
-
-<section>
-<h2>TheoLib Library</h2>
-<p style="text-align:center;color:var(--muted)">
-Free knowledge. Premium depth. One library.
-</p>
-
-<div class="search">
-<input id="searchInput" placeholder="Search books…" onkeyup="searchLibrary()">
 </div>
 
-<!-- 📖 FREE BOOKS -->
-<h3>🆓 Free Reads</h3>
-<div class="lib-grid">
-
-<div class="book-card" data-search="three musketeers dumas adventure">
-<img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
-<h4>The Three Musketeers</h4>
-<p>Alexandre Dumas</p>
-<a href="#"
-onclick="handleBookClick(
-  'The Three Musketeers',
-  'Alexandre Dumas',
-  'https://www.gutenberg.org/ebooks/1257',
-  'free'
-)">Read Free</a>
-</div>
-
-<div class="book-card" data-search="frankenstein shelley science">
-<img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
-<h4>Frankenstein</h4>
-<p>Mary Shelley</p>
-<a href="#"
-onclick="handleBookClick(
-  'Frankenstein',
-  'Mary Shelley',
-  'https://www.gutenberg.org/ebooks/84',
-  'free'
-)">Read Free</a>
-</div>
-
-</div>
-
-<!-- 🔒 MEMBERS ONLY -->
-<h3>🔒 Members Only</h3>
-<div class="lib-grid">
-
-<div class="book-card locked" data-search="count monte cristo dumas">
-<img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
-<h4>The Count of Monte Cristo</h4>
-<p>Alexandre Dumas</p>
-<a href="#"
-onclick="handleBookClick(
-  'The Count of Monte Cristo',
-  'Alexandre Dumas',
-  'https://www.gutenberg.org/ebooks/1184',
-  'locked'
-)">Unlock</a>
-</div>
-
-<div class="book-card locked" data-search="dracula stoker gothic">
-<img src="https://covers.openlibrary.org/b/id/8228691-L.jpg">
-<h4>Dracula</h4>
-<p>Bram Stoker</p>
-<a href="#"
-onclick="handleBookClick(
-  'Dracula',
-  'Bram Stoker',
-  'https://www.gutenberg.org/ebooks/345',
-  'locked'
-)">Unlock</a>
-</div>
-
-</div>
-
-</section>
-
-<footer>
-TheoLib © 2026 · Knowledge Without Barriers
-</footer>
-
-<!-- SEARCH -->
-<script>
-function searchLibrary(){
-  const input = document.getElementById("searchInput").value.toLowerCase();
-  document.querySelectorAll(".book-card").forEach(card=>{
-    card.style.display =
-      card.dataset.search.includes(input) ? "block" : "none";
-  });
-}
-</script>
-
-<!-- FIREBASE + LOGIC -->
-<script type="module" src="firebase.js"></script>
-<script type="module" src="library-logic.js"></script>
+<script src="library.logic.js"></script>
+<script src="library.js"></script>
 
 </body>
 </html>
-
-
