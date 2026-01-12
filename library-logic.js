@@ -1,34 +1,82 @@
-import { auth, db } from "./firebase.js";
-import { onAuthStateChanged } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { collection, addDoc, serverTimestamp } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// ===== TheoLib Library Core Logic =====
 
-let currentUser = null;
+// Free read control
+const FREE_READ_LIMIT = 2;
 
-onAuthStateChanged(auth, user => {
-  currentUser = user;
-});
-
-window.handleBookClick = async (title, author, link, access) => {
-  if (access === "locked" && !currentUser) {
-    localStorage.setItem("pendingBook", JSON.stringify({ title, author, link }));
-    window.location.href = "auth.html";
-    return;
-  }
-
-  // Save as READ
-  if (currentUser) {
-    await addDoc(
-      collection(db, "users", currentUser.uid, "library", "read", "items"),
-      {
-        title,
-        author,
-        link,
-        readAt: serverTimestamp()
-      }
-    );
-  }
-
-  window.open(link, "_blank");
+// Storage keys
+const STORAGE = {
+  reads: "theolib_reads",
+  saved: "theolib_saved",
+  readBooks: "theolib_read_books"
 };
+
+// Get stored values
+function getStore(key, fallback) {
+  return JSON.parse(localStorage.getItem(key)) || fallback;
+}
+
+// Save to storage
+function setStore(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+// Check login state (temporary)
+function isLoggedIn() {
+  return !!localStorage.getItem("theolib_user");
+}
+
+// Reads count
+function getReadCount() {
+  return getStore(STORAGE.reads, 0);
+}
+
+function incrementReads() {
+  let r = getReadCount() + 1;
+  setStore(STORAGE.reads, r);
+  return r;
+}
+
+// Saved books
+function getSaved() {
+  return getStore(STORAGE.saved, []);
+}
+
+function toggleSave(bookId) {
+  let saved = getSaved();
+  if (saved.includes(bookId)) {
+    saved = saved.filter(id => id !== bookId);
+  } else {
+    saved.push(bookId);
+  }
+  setStore(STORAGE.saved, saved);
+}
+
+// Read books
+function getReadBooks() {
+  return getStore(STORAGE.readBooks, []);
+}
+
+function markRead(bookId) {
+  let list = getReadBooks();
+  if (!list.includes(bookId)) {
+    list.push(bookId);
+    setStore(STORAGE.readBooks, list);
+  }
+}
+
+// Read permission check
+function canRead() {
+  if (isLoggedIn()) return true;
+  return getReadCount() < FREE_READ_LIMIT;
+}
+
+// Trigger read
+function attemptRead(bookId) {
+  if (!canRead()) {
+    document.getElementById("loginPopup").style.display = "flex";
+    return false;
+  }
+  incrementReads();
+  markRead(bookId);
+  return true;
+}
