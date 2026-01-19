@@ -1,44 +1,60 @@
-const books = [
-  {
-    id: "b1",
-    title: "The Three Musketeers",
-    free: true,
-    link: "https://www.gutenberg.org/ebooks/1257"
-  },
-  {
-    id: "b2",
-    title: "Intro to AI",
-    free: false
-  }
+// ===== TheoLib Library UI Engine =====
+
+// Sample book database (expandable to 100+)
+const BOOKS = [
+  { id: "b1", title: "Biology A-Level", category: "Study", thumb: "assets/books/bio.jpg" },
+  { id: "b2", title: "Physics O-Level", category: "Study", thumb: "assets/books/physics.jpg" },
+  { id: "b3", title: "Chemistry New Curriculum", category: "Study", thumb: "assets/books/chem.jpg" },
+
+  { id: "b4", title: "African Folktales", category: "Literature", thumb: "assets/books/folk.jpg" },
+  { id: "b5", title: "Shakespeare Simplified", category: "Literature", thumb: "assets/books/shake.jpg" },
+
+  { id: "b6", title: "TheoLib Comics Vol.1", category: "Comics", thumb: "assets/books/comic1.jpg" },
+  { id: "b7", title: "TheoLib Comics Vol.2", category: "Comics", thumb: "assets/books/comic2.jpg" },
+
+  { id: "b8", title: "Young Authors Hub", category: "Creativity", thumb: "assets/books/creative.jpg" },
+  { id: "b9", title: "Poems From Youth", category: "Creativity", thumb: "assets/books/poems.jpg" }
 ];
 
-const freeContainer = document.getElementById("freeBooks");
-const premiumContainer = document.getElementById("premiumBooks");
+// Render library
+function renderLibrary() {
+  const grid = document.getElementById("libraryGrid");
+  if (!grid) return;
 
-const user = localStorage.getItem("user");
+  grid.innerHTML = "";
 
-books.forEach(book => {
-  const div = document.createElement("div");
-  div.className = "book";
-  div.innerHTML = `<h3>${book.title}</h3>`;
+  BOOKS.forEach(book => {
+    const card = document.createElement("div");
+    card.className = "book-card";
 
-  if (book.free) {
-    div.innerHTML += `<a href="${book.link}" target="_blank">Read Free</a>`;
-    freeContainer.appendChild(div);
-  } else {
-    const btn = document.createElement("button");
-    btn.textContent = "Read";
+    card.innerHTML = `
+      <img src="${book.thumb}" alt="${book.title}">
+      <div class="book-info">
+        <h3>${book.title}</h3>
+        <span class="tag">${book.category}</span>
+        <div class="book-actions">
+          <button class="read-btn">Read</button>
+          <button class="save-btn">Save</button>
+        </div>
+      </div>
+    `;
 
-    btn.onclick = () => {
-      if (!user) {
-        alert("Please sign in to access this book.");
-        window.location.href = "auth.html";
-      } else {
-        alert("Premium access granted (payment coming next phase)");
+    // Read button
+    card.querySelector(".read-btn").onclick = () => {
+      if (attemptRead(book.id)) {
+        alert("📖 Opening book: " + book.title);
       }
     };
 
-    div.appendChild(btn);
-    premiumContainer.appendChild(div);
-  }
-});
+    // Save button
+    card.querySelector(".save-btn").onclick = () => {
+      toggleSave(book.id);
+      alert("📚 Saved to My Library");
+    };
+
+    grid.appendChild(card);
+  });
+}
+
+// Init
+document.addEventListener("DOMContentLoaded", renderLibrary);
