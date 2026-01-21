@@ -1,30 +1,31 @@
-// ===============================
-// THEOLIB FIREBASE CORE
-// ===============================
+// ================================
+// THEOLIB — FIREBASE CORE
+// ONE FILE • FINAL VERSION
+// ================================
 
-// Firebase imports (CDN style)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// Import Firebase (v9 modular)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  updateDoc, 
+  arrayUnion, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// ===============================
-// CONFIG (YOUR PROJECT)
-// ===============================
+// ================================
+// FIREBASE CONFIG (YOURS)
+// ================================
 const firebaseConfig = {
   apiKey: "AIzaSyC7LjxapWLQCW_zLRCOZS25hWVEaOG1mFY",
   authDomain: "theolib-426cf.firebaseapp.com",
@@ -34,105 +35,140 @@ const firebaseConfig = {
   appId: "1:879359514394:web:259ad5ed2e8949e2e97ea3"
 };
 
-// ===============================
-// INIT
-// ===============================
+// ================================
+// INITIALIZE
+// ================================
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// ===============================
-// AUTH STATE (GLOBAL)
-// ===============================
-export let currentUser = null;
-export let isAdmin = false;
+// Make global
+window.auth = auth;
+window.db = db;
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUser = user;
-
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-      await setDoc(ref, {
-        email: user.email,
-        role: "user", // admin | author | user
-        joinedAt: serverTimestamp(),
-        booksRead: [],
-        booksSaved: [],
-        country: null,
-        device: navigator.userAgent
-      });
-    }
-
-    const data = (await getDoc(ref)).data();
-    isAdmin = data.role === "admin";
-
-    console.log("Logged in:", user.email, "Admin:", isAdmin);
-  } else {
-    currentUser = null;
-    isAdmin = false;
-    console.log("Logged out");
-  }
-});
-
-// ===============================
+// ================================
 // AUTH FUNCTIONS
-// ===============================
-export async function signup(email, password, role = "user") {
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
+// ================================
 
+window.signup = async function(email, password, role = "reader") {
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
   await setDoc(doc(db, "users", cred.user.uid), {
     email,
     role,
     joinedAt: serverTimestamp(),
     booksRead: [],
-    booksSaved: [],
-    device: navigator.userAgent
+    booksSaved: []
   });
-}
+};
 
-export async function login(email, password) {
-  return signInWithEmailAndPassword(auth, email, password);
-}
+window.login = async function(email, password) {
+  await signInWithEmailAndPassword(auth, email, password);
+};
 
-export async function logout() {
-  return signOut(auth);
-}
+window.logout = async function() {
+  await signOut(auth);
+  location.href = "index.html";
+};
 
-// ===============================
+// ================================
+// USER STATE
+// ================================
+
+window.currentUser = null;
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    window.currentUser = user;
+    document.body.classList.add("logged-in");
+  } else {
+    window.currentUser = null;
+    document.body.classList.remove("logged-in");
+  }
+});
+
+// ================================
 // BOOK TRACKING
-// ===============================
-export async function markBookRead(book) {
-  if (!currentUser) return;
+// ================================
 
-  const ref = doc(db, "users", currentUser.uid);
-  await updateDoc(ref, {
+window.readBook = async function(title, author, link) {
+  if (!currentUser) {
+    alert("Please login to read this book.");
+    location.href = "auth.html";
+    return;
+  }
+
+  const userRef = doc(db, "users", currentUser.uid);
+
+  await updateDoc(userRef, {
     booksRead: arrayUnion({
-      ...book,
-      time: Date.now()
+      title,
+      author,
+      link,
+      readAt: new Date()
     })
   });
-}
 
-export async function saveBook(book) {
+  window.open(link, "_blank");
+};
+
+window.saveBook = async function(title, author, cover, link) {
+  if (!currentUser) {
+    alert("Login to save books to your library.");
+    location.href = "auth.html";
+    return;
+  }
+
+  const userRef = doc(db, "users", currentUser.uid);
+
+  await updateDoc(userRef, {
+    booksSaved: arrayUnion({
+      title,
+      author,
+      cover,
+      link,
+      savedAt: new Date()
+    })
+  });
+
+  alert("Saved to My Library ✅");
+};
+
+// ================================
+// LOAD MY LIBRARY
+// ================================
+
+window.loadMyLibrary = async function() {
   if (!currentUser) return;
 
-  const ref = doc(db, "users", currentUser.uid);
-  await updateDoc(ref, {
-    booksSaved: arrayUnion(book)
-  });
-}
+  const snap = await getDoc(doc(db, "users", currentUser.uid));
+  if (!snap.exists()) return;
 
-// ===============================
-// ACCESS CONTROL
-// ===============================
-export function requireLogin(action) {
-  if (!currentUser) {
-    alert("Please login or sign up to continue 📚");
-    window.location.href = "auth.html";
-    return false;
-  }
-  return true;
-}
+  const data = snap.data();
+
+  const savedEl = document.getElementById("savedBooks");
+  const readEl = document.getElementById("readBooks");
+
+  savedEl.innerHTML = "";
+  readEl.innerHTML = "";
+
+  data.booksSaved.forEach(b => {
+    savedEl.innerHTML += `
+      <div class="book-card">
+        <img src="${b.cover}">
+        <h4>${b.title}</h4>
+        <p>${b.author}</p>
+        <a href="${b.link}" target="_blank">Read</a>
+      </div>
+    `;
+  });
+
+  data.booksRead.forEach(b => {
+    readEl.innerHTML += `
+      <div class="book-card">
+        <h4>${b.title}</h4>
+        <p>${b.author}</p>
+        <small>Read ✔</small>
+      </div>
+    `;
+  });
+};
