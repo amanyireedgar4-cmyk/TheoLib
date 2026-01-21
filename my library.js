@@ -1,50 +1,72 @@
 // mylibrary.js
 
-document.addEventListener("DOMContentLoaded", () => {
-  const savedContainer = document.getElementById("savedBooks");
-  const readContainer = document.getElementById("readBooks");
+import {
+  getSavedBooks,
+  getReadBooks
+} from "./library.logic.js";
 
-  const user = JSON.parse(localStorage.getItem("theolib_user"));
+// Ensure user is logged in
+const user = JSON.parse(localStorage.getItem("theolibUser"));
+if (!user) {
+  alert("Please sign in to access your library.");
+  window.location.href = "auth.html";
+}
 
-  if (!user) {
-    alert("Please log in to access your library.");
-    window.location.href = "auth.html";
+// Elements
+const savedGrid = document.getElementById("savedBooksGrid");
+const readGrid = document.getElementById("readBooksGrid");
+
+// Load Saved Books
+function loadSavedBooks() {
+  const savedBooks = getSavedBooks(user.email);
+
+  if (savedBooks.length === 0) {
+    savedGrid.innerHTML = "<p>No saved books yet.</p>";
     return;
   }
 
-  const userId = user.email;
+  savedGrid.innerHTML = "";
 
-  const savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${userId}`)) || [];
-  const readBooks = JSON.parse(localStorage.getItem(`readBooks_${userId}`)) || [];
-
-  renderBooks(savedBooks, savedContainer, "No saved books yet.");
-  renderBooks(readBooks, readContainer, "No books read yet.");
-});
-
-function renderBooks(books, container, emptyMessage) {
-  container.innerHTML = "";
-
-  if (books.length === 0) {
-    container.innerHTML = `<p class="empty-msg">${emptyMessage}</p>`;
-    return;
-  }
-
-  books.forEach(book => {
+  savedBooks.forEach(book => {
     const card = document.createElement("div");
     card.className = "book-card";
 
     card.innerHTML = `
       <img src="${book.thumbnail}" alt="${book.title}">
       <h3>${book.title}</h3>
-      <p class="author">${book.author || "Unknown Author"}</p>
-      <button onclick="openBook('${book.id}')">Open</button>
+      <p>${book.category}</p>
+      <a href="${book.link}" target="_blank" class="read-btn">Read</a>
     `;
 
-    container.appendChild(card);
+    savedGrid.appendChild(card);
   });
 }
 
-function openBook(bookId) {
-  localStorage.setItem("currentBook", bookId);
-  window.location.href = "library.html";
+// Load Read Books
+function loadReadBooks() {
+  const readBooks = getReadBooks(user.email);
+
+  if (readBooks.length === 0) {
+    readGrid.innerHTML = "<p>No books read yet.</p>";
+    return;
+  }
+
+  readGrid.innerHTML = "";
+
+  readBooks.forEach(book => {
+    const card = document.createElement("div");
+    card.className = "book-card";
+
+    card.innerHTML = `
+      <img src="${book.thumbnail}" alt="${book.title}">
+      <h3>${book.title}</h3>
+      <p>${book.category}</p>
+    `;
+
+    readGrid.appendChild(card);
+  });
 }
+
+// Init
+loadSavedBooks();
+loadReadBooks();
