@@ -1,107 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TheoLib – Library</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="library.logic.js" defer></script>
+  <meta charset="UTF-8" />
+  <title>TheoLib — Library</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
 
-<header class="topbar">
-  <h1>TheoLib Library</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="mylibrary.html">My Library</a>
-    <a href="dashboard.html">Dashboard</a>
-  </nav>
-</header>
+<body class="library-page">
 
-<main class="library-container">
+  <header class="top-bar">
+    <h1>TheoLib Library</h1>
+    <nav>
+      <a href="mylibrary.html">My Library</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="#" onclick="logoutUser()">Logout</a>
+    </nav>
+  </header>
 
-  <!-- FREE BOOKS -->
-  <section>
-    <h2>📘 Free Reads</h2>
-    <div class="book-grid">
-
-      <div class="book-card">
-        <img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
-        <h3>The Three Musketeers</h3>
-        <p>Alexandre Dumas</p>
-        <button onclick="openBook({
-          id:'free1',
-          title:'The Three Musketeers',
-          author:'Alexandre Dumas',
-          link:'https://www.gutenberg.org/ebooks/1257',
-          free:true
-        })">Read</button>
-      </div>
-
-      <div class="book-card">
-        <img src="https://covers.openlibrary.org/b/id/7222246-L.jpg">
-        <h3>Frankenstein</h3>
-        <p>Mary Shelley</p>
-        <button onclick="openBook({
-          id:'free2',
-          title:'Frankenstein',
-          author:'Mary Shelley',
-          link:'https://www.gutenberg.org/ebooks/84',
-          free:true
-        })">Read</button>
-      </div>
-
-    </div>
+  <!-- AI PANEL -->
+  <section class="ai-panel">
+    <h2>AI Inspiration</h2>
+    <p>Need reading inspiration? AI will suggest books here.</p>
+    <button disabled>Coming Soon</button>
   </section>
 
-  <!-- PREMIUM BOOKS -->
-  <section>
-    <h2>🔒 Premium Library</h2>
-    <div class="book-grid">
-
-      <div class="book-card locked">
-        <img src="https://covers.openlibrary.org/b/id/10521270-L.jpg">
-        <h3>Advanced Biology</h3>
-        <p>Study Series</p>
-        <button onclick="openBook({
-          id:'paid1',
-          title:'Advanced Biology',
-          author:'Study Series',
-          link:'#',
-          free:false
-        })">Read</button>
-        <button onclick="saveBook({
-          id:'paid1',
-          title:'Advanced Biology',
-          author:'Study Series'
-        })">Save</button>
-      </div>
-
-      <div class="book-card locked">
-        <img src="https://covers.openlibrary.org/b/id/10958358-L.jpg">
-        <h3>Creative Writing</h3>
-        <p>Youth Authors</p>
-        <button onclick="openBook({
-          id:'paid2',
-          title:'Creative Writing',
-          author:'Youth Authors',
-          link:'#',
-          free:false
-        })">Read</button>
-        <button onclick="saveBook({
-          id:'paid2',
-          title:'Creative Writing',
-          author:'Youth Authors'
-        })">Save</button>
-      </div>
-
-    </div>
+  <!-- BOOKS -->
+  <section class="book-grid" id="bookGrid">
+    <!-- injected by JS -->
   </section>
 
-</main>
+  <!-- LOGIN WALL -->
+  <div id="loginWall" class="login-wall hidden">
+    <h2>Unlock Full Library</h2>
+    <p>Login to save, read & track books</p>
+    <a href="auth.html" class="btn">Login / Sign Up</a>
+  </div>
 
-<footer class="footer">
-  <p>© 2026 TheoLib</p>
-</footer>
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { books } from "./library.logic.js";
+
+    const grid = document.getElementById("bookGrid");
+    const wall = document.getElementById("loginWall");
+
+    auth.onAuthStateChanged(user => {
+      renderBooks(user);
+      if (!user) wall.classList.remove("hidden");
+    });
+
+    function renderBooks(user) {
+      grid.innerHTML = "";
+      books.forEach((book, index) => {
+        if (!user && index >= 2) return;
+
+        const card = document.createElement("div");
+        card.className = "book-card";
+
+        card.innerHTML = `
+          <img src="${book.cover}" />
+          <h3>${book.title}</h3>
+          <p>${book.author}</p>
+          <button onclick="readBook('${book.id}')">Read</button>
+          ${user ? `<button onclick="saveBook('${book.id}')">Save</button>` : ""}
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    window.readBook = id => {
+      alert("Reading book: " + id);
+    };
+
+    window.saveBook = id => {
+      alert("Saved book: " + id);
+    };
+
+    window.logoutUser = () => {
+      auth.signOut();
+      location.href = "index.html";
+    };
+  </script>
 
 </body>
 </html>
