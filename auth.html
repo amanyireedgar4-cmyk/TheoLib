@@ -1,158 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>TheoLib — Login / Sign Up</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-:root{
-  --bg:#0b0f1a;
-  --panel:#12172a;
-  --accent:#4cc9f0;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:var(--bg);
-  font-family:Arial, sans-serif;
-  color:var(--text);
-}
-.card{
-  background:var(--panel);
-  padding:40px;
-  width:100%;
-  max-width:380px;
-  border-radius:18px;
-  box-shadow:0 30px 60px rgba(0,0,0,.4);
-}
-h2{
-  text-align:center;
-  margin-bottom:8px;
-  color:var(--accent);
-}
-p{
-  text-align:center;
-  font-size:14px;
-  color:var(--muted);
-  margin-bottom:30px;
-}
-input, select{
-  width:100%;
-  padding:12px 14px;
-  border-radius:10px;
-  border:none;
-  margin-bottom:14px;
-  font-size:14px;
-}
-.password-wrap{
-  position:relative;
-}
-.password-wrap button{
-  position:absolute;
-  right:10px;
-  top:8px;
-  background:none;
-  border:none;
-  color:var(--muted);
-  cursor:pointer;
-}
-button.main{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:none;
-  background:var(--accent);
-  color:#000;
-  font-weight:bold;
-  cursor:pointer;
-}
-.toggle{
-  margin-top:18px;
-  text-align:center;
-  font-size:13px;
-  color:var(--muted);
-  cursor:pointer;
-}
-.toggle span{
-  color:var(--accent);
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>TheoLib — Login</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body>
+<body class="auth-page">
 
-<div class="card">
-  <h2 id="title">Login</h2>
-  <p id="subtitle">Access more books & features</p>
+  <div class="auth-box">
+    <h1>TheoLib</h1>
+    <p class="tagline">Knowledge. Organized.</p>
 
-  <input id="email" type="email" placeholder="Email" autocomplete="email">
+    <!-- LOGIN -->
+    <div class="auth-section">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button onclick="loginUser()">Login</button>
+    </div>
 
-  <div class="password-wrap">
-    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
-    <button onclick="togglePassword()">👁️</button>
+    <hr />
+
+    <!-- SIGNUP -->
+    <div class="auth-section">
+      <h2>Create Account</h2>
+      <input type="email" id="signupEmail" placeholder="Email" />
+      <input type="password" id="signupPassword" placeholder="Password" />
+      <button onclick="signupUser()">Sign Up</button>
+    </div>
   </div>
 
-  <select id="role" style="display:none">
-    <option value="user">Reader</option>
-    <option value="author">Author</option>
-  </select>
+  <!-- LOGIC -->
+  <script type="module">
+    import { signup, login } from "./firebase.js";
 
-  <button class="main" onclick="submit()">Continue</button>
+    window.loginUser = async () => {
+      const email = loginEmail.value;
+      const password = loginPassword.value;
 
-  <div class="toggle" onclick="toggleMode()">
-    <span id="toggleText">Create account</span>
-  </div>
-</div>
+      try {
+        await login(email, password);
+        location.href = "library.html";
+      } catch (e) {
+        alert(e.message);
+      }
+    };
 
-<script type="module">
-import { login, signup } from "./firebase.js";
+    window.signupUser = async () => {
+      const email = signupEmail.value;
+      const password = signupPassword.value;
 
-let mode = "login";
-
-window.toggleMode = () => {
-  mode = mode === "login" ? "signup" : "login";
-  document.getElementById("title").innerText = mode === "login" ? "Login" : "Create Account";
-  document.getElementById("subtitle").innerText =
-    mode === "login" ? "Access more books & features" : "Join TheoLib today";
-  document.getElementById("role").style.display = mode === "signup" ? "block" : "none";
-  document.getElementById("toggleText").innerText =
-    mode === "login" ? "Create account" : "Already have an account?";
-};
-
-window.togglePassword = () => {
-  const p = document.getElementById("password");
-  p.type = p.type === "password" ? "text" : "password";
-};
-
-window.submit = async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const role = document.getElementById("role").value;
-
-  if(!email || !password){
-    alert("Fill all fields");
-    return;
-  }
-
-  try{
-    if(mode === "login"){
-      await login(email, password);
-    } else {
-      await signup(email, password, role);
-    }
-    window.location.href = "library.html";
-  }catch(err){
-    alert(err.message);
-  }
-};
-</script>
+      try {
+        await signup(email, password);
+        location.href = "library.html";
+      } catch (e) {
+        alert(e.message);
+      }
+    };
+  </script>
 
 </body>
 </html>
