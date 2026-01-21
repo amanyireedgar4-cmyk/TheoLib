@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Library | TheoLib</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1>📚 My Library</h1>
+  <nav>
+    <a href="library.html">Library</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </nav>
+</header>
+
+<main class="library-section">
+
+  <section>
+    <h2>⭐ Saved Books</h2>
+    <div id="savedBooksGrid" class="library-grid"></div>
+  </section>
+
+  <section>
+    <h2>📖 Read Books</h2>
+    <div id="readBooksGrid" class="library-grid"></div>
+  </section>
+
+</main>
+
+<script type="module" src="mylibrary.js"></script>
+<script src="auth.js"></script>
+
+</body>
+</html>
