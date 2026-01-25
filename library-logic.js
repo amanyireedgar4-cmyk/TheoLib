@@ -1,112 +1,111 @@
-// Central book database for TheoLib
+import { auth, db } from "./firebase.js";
 
-export const books = [
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  {
-    id: "bk001",
-    title: "Introduction to Artificial Intelligence",
-    author: "TheoLib Editors",
-    category: "AI",
-    cover: "assets/ai1.jpg",
-    price: 0,
-    monetized: false
-  },
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  {
-    id: "bk002",
-    title: "Machine Learning Basics",
-    author: "TheoLib Editors",
-    category: "AI",
-    cover: "assets/ai2.jpg",
-    price: 0,
-    monetized: false
-  },
+let currentUser = null;
+let currentUserData = null;
 
-  {
-    id: "bk003",
-    title: "Deep Learning Explained",
-    author: "TheoLib Research",
-    category: "AI",
-    cover: "assets/ai3.jpg",
-    price: 5,
-    monetized: true
-  },
+/* ==============================
+   AUTH WATCHER
+================================ */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const snap = await getDoc(doc(db, "users", user.uid));
+    currentUserData = snap.exists() ? snap.data() : null;
+  }
+});
 
-  {
-    id: "bk004",
-    title: "Modern Web Development",
-    author: "Community Author",
-    category: "Programming",
-    cover: "assets/web1.jpg",
-    price: 3,
-    monetized: true
-  },
+/* ==============================
+   READ BOOK
+================================ */
+window.readBook = async function (title, author, url, isFree) {
 
-  {
-    id: "bk005",
-    title: "JavaScript from Zero",
-    author: "TheoLib Community",
-    category: "Programming",
-    cover: "assets/js1.jpg",
-    price: 0,
-    monetized: false
-  },
-
-  {
-    id: "bk006",
-    title: "Python for Everyone",
-    author: "TheoLib Community",
-    category: "Programming",
-    cover: "assets/py1.jpg",
-    price: 4,
-    monetized: true
-  },
-
-  {
-    id: "bk007",
-    title: "Creative Writing Essentials",
-    author: "Independent Author",
-    category: "Writing",
-    cover: "assets/write1.jpg",
-    price: 2,
-    monetized: true
-  },
-
-  {
-    id: "bk008",
-    title: "Poetry & Expression",
-    author: "Community Poet",
-    category: "Writing",
-    cover: "assets/poetry1.jpg",
-    price: 0,
-    monetized: false
-  },
-
-  {
-    id: "bk009",
-    title: "Entrepreneurship in Africa",
-    author: "Guest Author",
-    category: "Business",
-    cover: "assets/biz1.jpg",
-    price: 5,
-    monetized: true
-  },
-
-  {
-    id: "bk010",
-    title: "Financial Literacy Basics",
-    author: "TheoLib Finance",
-    category: "Business",
-    cover: "assets/finance1.jpg",
-    price: 3,
-    monetized: true
+  if (!isFree && !currentUser) {
+    alert("Please sign in to access this book.");
+    window.location.href = "auth.html";
+    return;
   }
 
-];
+  // Track reading if logged in
+  if (currentUser) {
+    await updateDoc(doc(db, "users", currentUser.uid), {
+      readBooks: arrayUnion({
+        title,
+        author,
+        url,
+        readAt: serverTimestamp()
+      })
+    });
+  }
 
-/*
-Future-ready notes:
-- price > 0 → paid book
-- monetized true → revenue split applies
-- category → used for filters later
-*/
+  window.open(url, "_blank");
+};
+
+/* ==============================
+   SAVE BOOK
+================================ */
+window.saveBook = async function (title, author, thumbnail) {
+
+  if (!currentUser) {
+    alert("Sign in to save books to your library.");
+    window.location.href = "auth.html";
+    return;
+  }
+
+  await updateDoc(doc(db, "users", currentUser.uid), {
+    savedBooks: arrayUnion({
+      title,
+      author,
+      thumbnail,
+      savedAt: serverTimestamp()
+    })
+  });
+
+  alert("Book saved to My Library 📚");
+};
+
+/* ==============================
+   LOAD MY LIBRARY
+================================ */
+window.loadMyLibrary = async function () {
+
+  if (!currentUser) {
+    window.location.href = "auth.html";
+    return;
+  }
+
+  const readList = document.getElementById("readBooks");
+  const savedList = document.getElementById("savedBooks");
+
+  readList.innerHTML = "";
+  savedList.innerHTML = "";
+
+  currentUserData.readBooks?.forEach(book => {
+    readList.innerHTML += `
+      <div class="book-row">
+        <strong>${book.title}</strong>
+        <span>${book.author}</span>
+      </div>
+    `;
+  });
+
+  currentUserData.savedBooks?.forEach(book => {
+    savedList.innerHTML += `
+      <div class="book-row">
+        <strong>${book.title}</strong>
+        <span>${book.author}</span>
+      </div>
+    `;
+  });
+};
