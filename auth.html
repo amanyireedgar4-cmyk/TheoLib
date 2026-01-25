@@ -2,63 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TheoLib — Login</title>
+  <title>Login | TheoLib</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Firebase + Auth -->
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="auth.js"></script>
 </head>
 
 <body class="auth-page">
 
+<div class="auth-container">
+
+  <h1>TheoLib</h1>
+  <p class="auth-subtitle">Access Knowledge Without Barriers</p>
+
+  <!-- LOGIN -->
   <div class="auth-box">
-    <h1>TheoLib</h1>
-    <p class="tagline">Knowledge. Organized.</p>
+    <h2>Login</h2>
 
-    <!-- LOGIN -->
-    <div class="auth-section">
-      <h2>Login</h2>
-      <input type="email" id="loginEmail" placeholder="Email" />
-      <input type="password" id="loginPassword" placeholder="Password" />
-      <button onclick="loginUser()">Login</button>
+    <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
+    
+    <div class="password-wrap">
+      <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
+      <button onclick="togglePassword('loginPassword')">👁</button>
     </div>
 
-    <hr />
-
-    <!-- SIGNUP -->
-    <div class="auth-section">
-      <h2>Create Account</h2>
-      <input type="email" id="signupEmail" placeholder="Email" />
-      <input type="password" id="signupPassword" placeholder="Password" />
-      <button onclick="signupUser()">Sign Up</button>
-    </div>
+    <button class="primary-btn" onclick="login()">Login</button>
   </div>
 
-  <!-- LOGIC -->
-  <script type="module">
-    import { signup, login } from "./firebase.js";
+  <hr />
 
-    window.loginUser = async () => {
-      const email = loginEmail.value;
-      const password = loginPassword.value;
+  <!-- SIGN UP -->
+  <div class="auth-box">
+    <h2>Create Account</h2>
 
-      try {
-        await login(email, password);
-        location.href = "library.html";
-      } catch (e) {
-        alert(e.message);
-      }
-    };
+    <input id="signupEmail" type="email" placeholder="Email" autocomplete="email" />
 
-    window.signupUser = async () => {
-      const email = signupEmail.value;
-      const password = signupPassword.value;
+    <div class="password-wrap">
+      <input id="signupPassword" type="password" placeholder="Password" autocomplete="new-password" />
+      <button onclick="togglePassword('signupPassword')">👁</button>
+    </div>
 
-      try {
-        await signup(email, password);
-        location.href = "library.html";
-      } catch (e) {
-        alert(e.message);
-      }
-    };
-  </script>
+    <div class="role-select">
+      <label>
+        <input type="radio" name="role" value="reader" />
+        Reader
+      </label>
+      <label>
+        <input type="radio" name="role" value="author" />
+        Author
+      </label>
+    </div>
+
+    <button class="primary-btn" onclick="signup()">Sign Up</button>
+  </div>
+
+  <a class="back-home" href="index.html">← Back to Home</a>
+
+</div>
 
 </body>
 </html>
