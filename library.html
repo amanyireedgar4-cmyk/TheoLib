@@ -1,85 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TheoLib — Library</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<title>TheoLib Library</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="styles.css">
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="library.logic.js"></script>
 </head>
 
-<body class="library-page">
+<body>
 
-  <header class="top-bar">
-    <h1>TheoLib Library</h1>
-    <nav>
-      <a href="mylibrary.html">My Library</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="#" onclick="logoutUser()">Logout</a>
-    </nav>
-  </header>
-
-  <!-- AI PANEL -->
-  <section class="ai-panel">
-    <h2>AI Inspiration</h2>
-    <p>Need reading inspiration? AI will suggest books here.</p>
-    <button disabled>Coming Soon</button>
-  </section>
-
-  <!-- BOOKS -->
-  <section class="book-grid" id="bookGrid">
-    <!-- injected by JS -->
-  </section>
-
-  <!-- LOGIN WALL -->
-  <div id="loginWall" class="login-wall hidden">
-    <h2>Unlock Full Library</h2>
-    <p>Login to save, read & track books</p>
-    <a href="auth.html" class="btn">Login / Sign Up</a>
+<nav class="top-nav">
+  <h2>TheoLib</h2>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="library.html" class="active">Library</a>
+    <a href="mylibrary.html">My Library</a>
+    <a href="dashboard.html">Dashboard</a>
   </div>
+</nav>
 
-  <script type="module">
-    import { auth } from "./firebase.js";
-    import { books } from "./library.logic.js";
+<section class="library-section">
 
-    const grid = document.getElementById("bookGrid");
-    const wall = document.getElementById("loginWall");
+<h1>📚 Library</h1>
+<p class="subtitle">Some books are free. Others unlock when you sign in.</p>
 
-    auth.onAuthStateChanged(user => {
-      renderBooks(user);
-      if (!user) wall.classList.remove("hidden");
-    });
+<!-- ================= FREE BOOKS ================= -->
+<h2>🆓 Free Reads</h2>
 
-    function renderBooks(user) {
-      grid.innerHTML = "";
-      books.forEach((book, index) => {
-        if (!user && index >= 2) return;
+<div class="book-grid">
 
-        const card = document.createElement("div");
-        card.className = "book-card";
+<div class="book-card">
+  <img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
+  <h3>The Three Musketeers</h3>
+  <p>Alexandre Dumas</p>
+  <button onclick="readBook('The Three Musketeers','Alexandre Dumas','https://www.gutenberg.org/ebooks/1257', true)">
+    Read Free
+  </button>
+</div>
 
-        card.innerHTML = `
-          <img src="${book.cover}" />
-          <h3>${book.title}</h3>
-          <p>${book.author}</p>
-          <button onclick="readBook('${book.id}')">Read</button>
-          ${user ? `<button onclick="saveBook('${book.id}')">Save</button>` : ""}
-        `;
-        grid.appendChild(card);
-      });
-    }
+<div class="book-card">
+  <img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
+  <h3>Frankenstein</h3>
+  <p>Mary Shelley</p>
+  <button onclick="readBook('Frankenstein','Mary Shelley','https://www.gutenberg.org/ebooks/84', true)">
+    Read Free
+  </button>
+</div>
 
-    window.readBook = id => {
-      alert("Reading book: " + id);
-    };
+</div>
 
-    window.saveBook = id => {
-      alert("Saved book: " + id);
-    };
+<!-- ================= LOCKED BOOKS ================= -->
+<h2>🔒 Members Only</h2>
 
-    window.logoutUser = () => {
-      auth.signOut();
-      location.href = "index.html";
-    };
-  </script>
+<div class="book-grid">
+
+<div class="book-card locked">
+  <img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
+  <h3>The Count of Monte Cristo</h3>
+  <p>Alexandre Dumas</p>
+  <button onclick="readBook('The Count of Monte Cristo','Alexandre Dumas','https://www.gutenberg.org/ebooks/1184', false)">
+    Unlock to Read
+  </button>
+  <button class="secondary"
+    onclick="saveBook('The Count of Monte Cristo','Alexandre Dumas','https://covers.openlibrary.org/b/id/8231856-L.jpg')">
+    Save
+  </button>
+</div>
+
+<div class="book-card locked">
+  <img src="https://covers.openlibrary.org/b/id/8225265-L.jpg">
+  <h3>Sherlock Holmes</h3>
+  <p>Arthur Conan Doyle</p>
+  <button onclick="readBook('Sherlock Holmes','Arthur Conan Doyle','https://www.gutenberg.org/ebooks/1661', false)">
+    Unlock to Read
+  </button>
+  <button class="secondary"
+    onclick="saveBook('Sherlock Holmes','Arthur Conan Doyle','https://covers.openlibrary.org/b/id/8225265-L.jpg')">
+    Save
+  </button>
+</div>
+
+</div>
+
+<!-- ================= STUDY ================= -->
+<h2>📘 Study & Curriculum</h2>
+
+<div class="book-grid">
+
+<div class="book-card locked">
+  <img src="https://covers.openlibrary.org/b/id/7222161-L.jpg">
+  <h3>Origin of Species</h3>
+  <p>Charles Darwin</p>
+  <button onclick="readBook('Origin of Species','Charles Darwin','https://www.gutenberg.org/ebooks/2009', false)">
+    Unlock to Read
+  </button>
+  <button class="secondary"
+    onclick="saveBook('Origin of Species','Charles Darwin','https://covers.openlibrary.org/b/id/7222161-L.jpg')">
+    Save
+  </button>
+</div>
+
+</div>
+
+<!-- ================= YOUTH AUTHORS ================= -->
+<h2>✍ Youth Authors</h2>
+<p class="subtitle">Stories written by young creators.</p>
+
+<div class="book-grid">
+
+<div class="book-card locked">
+  <img src="https://placehold.co/300x450?text=Youth+Story">
+  <h3>Midnight Kampala</h3>
+  <p>Community Author</p>
+  <button onclick="readBook('Midnight Kampala','Community Author','#', false)">
+    Unlock to Read
+  </button>
+  <button class="secondary"
+    onclick="saveBook('Midnight Kampala','Community Author','https://placehold.co/300x450')">
+    Save
+  </button>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+TheoLib © 2026 · Knowledge is a human right
+</footer>
 
 </body>
 </html>
