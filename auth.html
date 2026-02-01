@@ -1,54 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Login • TheoLib</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Login | TheoLib</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #020617, #0f172a);
+      color: #e5e7eb;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-<link rel="stylesheet" href="styles.css">
-<script type="module" src="firebase.js"></script>
-<script type="module" src="auth.js"></script>
+    .auth-box {
+      background: #020617;
+      padding: 30px;
+      width: 350px;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #38bdf8;
+      color: #020617;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .toggle {
+      text-align: center;
+      margin-top: 15px;
+      cursor: pointer;
+      color: #38bdf8;
+    }
+
+    .password-box {
+      display: flex;
+      gap: 5px;
+    }
+
+    .password-box input {
+      flex: 1;
+    }
+
+    .password-box button {
+      width: 80px;
+      background: #1e293b;
+      color: #e5e7eb;
+    }
+  </style>
 </head>
 
-<body class="auth-body">
+<body>
 
-<div class="auth-container">
+<div class="auth-box">
+  <h2 id="title">Login</h2>
 
-  <h1>📚 TheoLib</h1>
-  <p class="auth-subtitle">
-    Learn. Read. Create. Share.
-  </p>
+  <input id="email" type="email" placeholder="Email">
 
-  <!-- ROLE -->
-  <label>Register / Login as</label>
+  <div class="password-box">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="togglePassword()">Show</button>
+  </div>
+
   <select id="role">
     <option value="reader">Reader</option>
     <option value="author">Author</option>
-    <option value="library">Library</option>
   </select>
 
-  <!-- EMAIL -->
-  <label>Email</label>
-  <input type="email" id="email" placeholder="example@gmail.com">
+  <button onclick="submitAuth()">Continue</button>
 
-  <!-- PASSWORD -->
-  <label>Password</label>
-  <input type="password" id="password" placeholder="••••••••">
-
-  <div class="auth-actions">
-    <button onclick="login()">Login</button>
-    <button class="secondary" onclick="signup()">Sign Up</button>
+  <div class="toggle" onclick="switchMode()">
+    Don’t have an account? Sign up
   </div>
-
-  <p class="auth-note">
-    By continuing, you agree to TheoLib’s community rules.
-  </p>
-
 </div>
 
-<footer class="auth-footer">
-TheoLib © 2026 · Knowledge grows when shared
-</footer>
-
+<script src="auth.js"></script>
 </body>
 </html>
