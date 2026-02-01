@@ -1,79 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TotoReads Library</title>
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="library.js"></script>
+<meta charset="UTF-8">
+<title>Library | TheoLib</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #020617;
+    color: #e5e7eb;
+  }
+
+  header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  h1 {
+    color: #38bdf8;
+  }
+
+  .library {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+  }
+
+  .book {
+    background: #0f172a;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .thumb {
+    height: 260px;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+  }
+
+  .info {
+    padding: 15px;
+    flex-grow: 1;
+  }
+
+  .info h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .info p {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 8px;
+    background: #1e293b;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+
+  .lock {
+    background: #020617cc;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    border-top: 1px solid #1e293b;
+  }
+
+  .lock:hover {
+    background: #020617;
+  }
+
+  /* MODAL */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-box {
+    background: #0f172a;
+    padding: 25px;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+  }
+
+  .modal-box button {
+    margin-top: 15px;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background: #38bdf8;
+    color: #020617;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="topbar">
-    <h1 class="logo">📚 TotoReads</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="mylibrary.html">My Library</a>
-      <a href="auth.html">Login</a>
-    </nav>
-  </header>
+<header>
+  <h1>TheoLib Library</h1>
+  <p>Explore ideas. Unlock knowledge.</p>
+</header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <h2>Explore Knowledge Without Limits</h2>
-    <p>Read • Save • Learn • Create</p>
-  </section>
+<div class="library" id="library"></div>
 
-  <!-- FREE BOOKS -->
-  <section class="section">
-    <h2>🆓 Free Reads</h2>
-    <div class="book-grid">
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <h3>Unlock This Book</h3>
+    <p>Sign in or subscribe to continue reading.</p>
+    <button onclick="goAuth()">Sign In / Sign Up</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+</div>
 
-      <div class="book-card">
-        <img src="https://via.placeholder.com/150" alt="Book">
-        <h3>The Art of Thinking</h3>
-        <p>Philosophy</p>
-        <button onclick="readBook('free1')">Read</button>
-      </div>
+<script>
+const user = localStorage.getItem("currentUser");
 
-      <div class="book-card">
-        <img src="https://via.placeholder.com/150" alt="Book">
-        <h3>Introduction to Biology</h3>
-        <p>Study</p>
-        <button onclick="readBook('free2')">Read</button>
-      </div>
+// SAMPLE BOOK DATA (can be replaced later)
+const books = [
+  { title: "Physics O-Level", cat: "Study", free: true, hook: "Master motion, energy & forces." },
+  { title: "Ugandan Literature", cat: "Literature", free: false, hook: "Stories that shaped a nation." },
+  { title: "Creative Comics Vol.1", cat: "Comics", free: true, hook: "Imagination meets art." },
+  { title: "Young Innovators", cat: "Youth", free: false, hook: "Ideas from the next generation." }
+];
 
+const lib = document.getElementById("library");
+
+books.forEach(b => {
+  const card = document.createElement("div");
+  card.className = "book";
+
+  card.innerHTML = `
+    <div class="thumb">📘</div>
+    <div class="info">
+      <h3>${b.title}</h3>
+      <p>${b.hook}</p>
+      <span class="tag">${b.cat}</span>
     </div>
-  </section>
-
-  <!-- LOGIN REQUIRED -->
-  <section class="section">
-    <h2>🔒 Login Required</h2>
-    <div class="book-grid">
-
-      <div class="book-card locked">
-        <img src="https://via.placeholder.com/150" alt="Book">
-        <h3>A-Level Physics</h3>
-        <p>Study</p>
-        <button onclick="requireLogin()">Login to Read</button>
-      </div>
-
-      <div class="book-card locked">
-        <img src="https://via.placeholder.com/150" alt="Book">
-        <h3>Modern African Literature</h3>
-        <p>Literature</p>
-        <button onclick="requireLogin()">Login to Read</button>
-      </div>
-
+    <div class="lock">
+      ${b.free ? "Free Read" : "Locked • Click to Unlock"}
     </div>
-  </section>
+  `;
 
-  <!-- CATEGORIES -->
-  <section class="section">
-    <h2>📂 Categories</h2>
-    <div class="category-grid">
-      <span>Comics</span>
-      <span>Literature</span>
-      <span>Study (O-Level)</span>
-      <span>Study
+  card.querySelector(".lock").onclick = () => {
+    if (b.free || user) {
+      alert("Open reader (next step)");
+    } else {
+      openModal();
+    }
+  };
+
+  lib.appendChild(card);
+});
+
+function openModal() {
+  document.getElementById("loginModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("loginModal").style.display = "none";
+}
+
+function goAuth() {
+  window.location.href = "auth.html";
+}
+</script>
+
+</body>
+</html>
