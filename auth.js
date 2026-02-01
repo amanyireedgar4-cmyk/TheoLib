@@ -1,9 +1,12 @@
-import { auth, db } from "./firebase.js";
+// auth.js
+import {
+  auth,
+  db
+} from "./firebase.js";
 
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
@@ -13,72 +16,83 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* ==============================
-   AUTO REDIRECT IF LOGGED IN
-================================ */
-onAuthStateChanged(auth, (user) => {
-  if (user && location.pathname.includes("auth.html")) {
-    window.location.href = "library.html";
-  }
-});
-
-/* ==============================
-   SIGN UP
-================================ */
+// SIGN UP
 window.signup = async function () {
-  const email = document.getElementById("signupEmail").value;
-  const password = document.getElementById("signupPassword").value;
-  const role = document.querySelector("input[name='role']:checked")?.value;
-
-  if (!email || !password || !role) {
-    alert("Please fill all fields.");
-    return;
-  }
-
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-
-    const isAdmin = email === "theolib41@gmail.com"; // ADMIN EMAIL
-
-    await setDoc(doc(db, "users", cred.user.uid), {
-      email,
-      role: isAdmin ? "admin" : role,
-      joinedAt: serverTimestamp(),
-      savedBooks: [],
-      readBooks: [],
-      paymentBalance: 0
-    });
-
-    window.location.href = "library.html";
-  } catch (err) {
-    alert(err.message);
-  }
-};
-
-/* ==============================
-   LOGIN
-================================ */
-window.login = async function () {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const role = document.getElementById("role").value;
 
   if (!email || !password) {
-    alert("Fill all fields.");
+    alert("Email and password required");
     return;
   }
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "library.html";
-  } catch (err) {
-    alert(err.message);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const user = userCredential.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+      email: email,
+      role: role,
+      createdAt: serverTimestamp(),
+      library: [],
+      readBooks: [],
+      savedBooks: []
+    });
+
+    alert("Account created successfully!");
+    redirectUser(role);
+
+  } catch (error) {
+    alert(error.message);
   }
 };
 
-/* ==============================
-   PASSWORD TOGGLE
-================================ */
-window.togglePassword = function (id) {
-  const input = document.getElementById(id);
-  input.type = input.type === "password" ? "text" : "password";
+// LOGIN
+window.login = async function () {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Email and password required");
+    return;
+  }
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const user = userCredential.user;
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+
+    if (!userDoc.exists()) {
+      alert("User profile missing.");
+      return;
+    }
+
+    const role = userDoc.data().role;
+    redirectUser(role);
+
+  } catch (error) {
+    alert(error.message);
+  }
 };
+
+// REDIRECT BASED ON ROLE
+function redirectUser(role) {
+  if (role === "author") {
+    window.location.href = "dashboard.html";
+  } else if (role === "library") {
+    window.location.href = "dashboard.html";
+  } else {
+    window.location.href = "library.html";
+  }
+}
