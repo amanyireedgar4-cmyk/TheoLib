@@ -1,137 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>TheoLib Library</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="styles.css">
-
-<script type="module" src="firebase.js"></script>
-<script type="module" src="library.logic.js"></script>
+  <meta charset="UTF-8">
+  <title>TotoReads Library</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="library.js"></script>
 </head>
 
 <body>
 
-<nav class="top-nav">
-  <h2>TheoLib</h2>
-  <div>
-    <a href="index.html">Home</a>
-    <a href="library.html" class="active">Library</a>
-    <a href="mylibrary.html">My Library</a>
-    <a href="dashboard.html">Dashboard</a>
-  </div>
-</nav>
+  <!-- HEADER -->
+  <header class="topbar">
+    <h1 class="logo">📚 TotoReads</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="mylibrary.html">My Library</a>
+      <a href="auth.html">Login</a>
+    </nav>
+  </header>
 
-<section class="library-section">
+  <!-- HERO -->
+  <section class="hero">
+    <h2>Explore Knowledge Without Limits</h2>
+    <p>Read • Save • Learn • Create</p>
+  </section>
 
-<h1>📚 Library</h1>
-<p class="subtitle">Some books are free. Others unlock when you sign in.</p>
+  <!-- FREE BOOKS -->
+  <section class="section">
+    <h2>🆓 Free Reads</h2>
+    <div class="book-grid">
 
-<!-- ================= FREE BOOKS ================= -->
-<h2>🆓 Free Reads</h2>
+      <div class="book-card">
+        <img src="https://via.placeholder.com/150" alt="Book">
+        <h3>The Art of Thinking</h3>
+        <p>Philosophy</p>
+        <button onclick="readBook('free1')">Read</button>
+      </div>
 
-<div class="book-grid">
+      <div class="book-card">
+        <img src="https://via.placeholder.com/150" alt="Book">
+        <h3>Introduction to Biology</h3>
+        <p>Study</p>
+        <button onclick="readBook('free2')">Read</button>
+      </div>
 
-<div class="book-card">
-  <img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
-  <h3>The Three Musketeers</h3>
-  <p>Alexandre Dumas</p>
-  <button onclick="readBook('The Three Musketeers','Alexandre Dumas','https://www.gutenberg.org/ebooks/1257', true)">
-    Read Free
-  </button>
-</div>
+    </div>
+  </section>
 
-<div class="book-card">
-  <img src="https://covers.openlibrary.org/b/id/8235116-L.jpg">
-  <h3>Frankenstein</h3>
-  <p>Mary Shelley</p>
-  <button onclick="readBook('Frankenstein','Mary Shelley','https://www.gutenberg.org/ebooks/84', true)">
-    Read Free
-  </button>
-</div>
+  <!-- LOGIN REQUIRED -->
+  <section class="section">
+    <h2>🔒 Login Required</h2>
+    <div class="book-grid">
 
-</div>
+      <div class="book-card locked">
+        <img src="https://via.placeholder.com/150" alt="Book">
+        <h3>A-Level Physics</h3>
+        <p>Study</p>
+        <button onclick="requireLogin()">Login to Read</button>
+      </div>
 
-<!-- ================= LOCKED BOOKS ================= -->
-<h2>🔒 Members Only</h2>
+      <div class="book-card locked">
+        <img src="https://via.placeholder.com/150" alt="Book">
+        <h3>Modern African Literature</h3>
+        <p>Literature</p>
+        <button onclick="requireLogin()">Login to Read</button>
+      </div>
 
-<div class="book-grid">
+    </div>
+  </section>
 
-<div class="book-card locked">
-  <img src="https://covers.openlibrary.org/b/id/8231856-L.jpg">
-  <h3>The Count of Monte Cristo</h3>
-  <p>Alexandre Dumas</p>
-  <button onclick="readBook('The Count of Monte Cristo','Alexandre Dumas','https://www.gutenberg.org/ebooks/1184', false)">
-    Unlock to Read
-  </button>
-  <button class="secondary"
-    onclick="saveBook('The Count of Monte Cristo','Alexandre Dumas','https://covers.openlibrary.org/b/id/8231856-L.jpg')">
-    Save
-  </button>
-</div>
-
-<div class="book-card locked">
-  <img src="https://covers.openlibrary.org/b/id/8225265-L.jpg">
-  <h3>Sherlock Holmes</h3>
-  <p>Arthur Conan Doyle</p>
-  <button onclick="readBook('Sherlock Holmes','Arthur Conan Doyle','https://www.gutenberg.org/ebooks/1661', false)">
-    Unlock to Read
-  </button>
-  <button class="secondary"
-    onclick="saveBook('Sherlock Holmes','Arthur Conan Doyle','https://covers.openlibrary.org/b/id/8225265-L.jpg')">
-    Save
-  </button>
-</div>
-
-</div>
-
-<!-- ================= STUDY ================= -->
-<h2>📘 Study & Curriculum</h2>
-
-<div class="book-grid">
-
-<div class="book-card locked">
-  <img src="https://covers.openlibrary.org/b/id/7222161-L.jpg">
-  <h3>Origin of Species</h3>
-  <p>Charles Darwin</p>
-  <button onclick="readBook('Origin of Species','Charles Darwin','https://www.gutenberg.org/ebooks/2009', false)">
-    Unlock to Read
-  </button>
-  <button class="secondary"
-    onclick="saveBook('Origin of Species','Charles Darwin','https://covers.openlibrary.org/b/id/7222161-L.jpg')">
-    Save
-  </button>
-</div>
-
-</div>
-
-<!-- ================= YOUTH AUTHORS ================= -->
-<h2>✍ Youth Authors</h2>
-<p class="subtitle">Stories written by young creators.</p>
-
-<div class="book-grid">
-
-<div class="book-card locked">
-  <img src="https://placehold.co/300x450?text=Youth+Story">
-  <h3>Midnight Kampala</h3>
-  <p>Community Author</p>
-  <button onclick="readBook('Midnight Kampala','Community Author','#', false)">
-    Unlock to Read
-  </button>
-  <button class="secondary"
-    onclick="saveBook('Midnight Kampala','Community Author','https://placehold.co/300x450')">
-    Save
-  </button>
-</div>
-
-</div>
-
-</section>
-
-<footer>
-TheoLib © 2026 · Knowledge is a human right
-</footer>
-
-</body>
-</html>
+  <!-- CATEGORIES -->
+  <section class="section">
+    <h2>📂 Categories</h2>
+    <div class="category-grid">
+      <span>Comics</span>
+      <span>Literature</span>
+      <span>Study (O-Level)</span>
+      <span>Study
