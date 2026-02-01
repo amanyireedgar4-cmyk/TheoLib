@@ -1,96 +1,58 @@
-// auth.js
-import {
-  auth,
-  db
-} from "./firebase.js";
+let mode = "login";
 
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+function switchMode() {
+  mode = mode === "login" ? "signup" : "login";
+  document.getElementById("title").textContent =
+    mode === "login" ? "Login" : "Sign Up";
 
-import {
-  doc,
-  setDoc,
-  getDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  document.querySelector(".toggle").textContent =
+    mode === "login"
+      ? "Don’t have an account? Sign up"
+      : "Already have an account? Login";
+}
 
-// SIGN UP
-window.signup = async function () {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+function togglePassword() {
+  const p = document.getElementById("password");
+  p.type = p.type === "password" ? "text" : "password";
+}
+
+function submitAuth() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
   const role = document.getElementById("role").value;
 
   if (!email || !password) {
-    alert("Email and password required");
+    alert("Fill all fields");
     return;
   }
 
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+  let users = JSON.parse(localStorage.getItem("users")) || {};
 
-    const user = userCredential.user;
-
-    await setDoc(doc(db, "users", user.uid), {
-      email: email,
-      role: role,
-      createdAt: serverTimestamp(),
-      library: [],
-      readBooks: [],
-      savedBooks: []
-    });
-
-    alert("Account created successfully!");
-    redirectUser(role);
-
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
-// LOGIN
-window.login = async function () {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (!email || !password) {
-    alert("Email and password required");
-    return;
-  }
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    const user = userCredential.user;
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-
-    if (!userDoc.exists()) {
-      alert("User profile missing.");
+  if (mode === "signup") {
+    if (users[email]) {
+      alert("Account already exists");
       return;
     }
 
-    const role = userDoc.data().role;
-    redirectUser(role);
+    users[email] = {
+      email,
+      password,
+      role,
+      created: new Date().toISOString()
+    };
 
-  } catch (error) {
-    alert(error.message);
+    localStorage.setItem("users", JSON.stringify(users));
+  } else {
+    if (!users[email] || users[email].password !== password) {
+      alert("Invalid login");
+      return;
+    }
   }
-};
 
-// REDIRECT BASED ON ROLE
-function redirectUser(role) {
+  localStorage.setItem("currentUser", email);
+
+  // Redirect
   if (role === "author") {
-    window.location.href = "dashboard.html";
-  } else if (role === "library") {
     window.location.href = "dashboard.html";
   } else {
     window.location.href = "library.html";
