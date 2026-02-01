@@ -1,108 +1,60 @@
-import { auth, db } from "./firebase.js";
-import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+const currentUser = localStorage.getItem("currentUser");
+const users = JSON.parse(localStorage.getItem("users")) || {};
+let books = JSON.parse(localStorage.getItem("books")) || [];
 
-import {
-  doc,
-  getDoc,
-  getDocs,
-  collection
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+if (!currentUser) {
+  window.location.href = "auth.html";
+}
 
-/* ==============================
-   AUTH CHECK
-================================ */
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "auth.html";
+// STATS
+document.getElementById("totalUsers").textContent =
+  Object.keys(users).length;
+
+document.getElementById("totalBooks").textContent =
+  books.length;
+
+document.getElementById("totalAuthors").textContent =
+  Object.values(users).filter(u => u.role === "author").length;
+
+// USERS TABLE
+const userTable = document.getElementById("userTable");
+Object.values(users).forEach(u => {
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${u.email}</td>
+    <td>${u.role}</td>
+    <td>${new Date(u.created).toLocaleDateString()}</td>
+  `;
+  userTable.appendChild(row);
+});
+
+// UPLOAD BOOK
+function uploadBook() {
+  const title = document.getElementById("bookTitle").value;
+  const category = document.getElementById("bookCategory").value;
+  const price = document.getElementById("bookPrice").value;
+
+  if (!title || !category) {
+    alert("Fill all fields");
     return;
   }
 
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-
-  if (!userSnap.exists()) return;
-
-  const userData = userSnap.data();
-
-  loadUserDashboard(user.uid);
-
-  if (userData.role === "admin") {
-    document.getElementById("adminDashboard").classList.remove("hidden");
-    loadAdminDashboard();
-  }
-});
-
-/* ==============================
-   USER DASHBOARD
-================================ */
-async function loadUserDashboard(uid) {
-  const activityRef = collection(db, "activityLogs");
-  const snapshot = await getDocs(activityRef);
-
-  let reads = 0;
-  let saved = 0;
-
-  const logList = document.getElementById("userActivityLog");
-  logList.innerHTML = "";
-
-  snapshot.forEach(docSnap => {
-    const log = docSnap.data();
-    if (log.uid === uid) {
-
-      if (log.type === "read") reads++;
-      if (log.type === "save") saved++;
-
-      const li = document.createElement("li");
-      li.textContent = `${log.action} • ${new Date(log.time).toLocaleString()}`;
-      logList.appendChild(li);
-    }
+  books.push({
+    id: Date.now(),
+    title,
+    category,
+    price: Number(price) || 0,
+    author: currentUser,
+    created: new Date().toISOString()
   });
 
-  document.getElementById("userReads").textContent = reads;
-  document.getElementById("userSaved").textContent = saved;
+  localStorage.setItem("books", JSON.stringify(books));
+  alert("Book uploaded successfully");
+  location.reload();
 }
 
-/* ==============================
-   ADMIN DASHBOARD
-================================ */
-async function loadAdminDashboard() {
-  const usersSnap = await getDocs(collection(db, "users"));
-  const activitySnap = await getDocs(collection(db, "activityLogs"));
-  const booksSnap = await getDocs(collection(db, "books"));
-
-  document.getElementById("totalUsers").textContent = usersSnap.size;
-  document.getElementById("totalBooks").textContent = booksSnap.size;
-
-  let totalReads = 0;
-  const traffic = {};
-
-  activitySnap.forEach(docSnap => {
-    const log = docSnap.data();
-    if (log.type === "read") totalReads++;
-
-    const key = `${log.country} | ${log.device} | ${log.browser}`;
-    traffic[key] = (traffic[key] || 0) + 1;
-  });
-
-  document.getElementById("totalReads").textContent = totalReads;
-
-  const trafficList = document.getElementById("trafficStats");
-  trafficList.innerHTML = "";
-
-  Object.entries(traffic).forEach(([key, count]) => {
-    const li = document.createElement("li");
-    li.textContent = `${key} → ${count} visits`;
-    trafficList.appendChild(li);
-  });
+// LOGOUT
+function logout() {
+  localStorage.removeItem("currentUser");
+  window.location.href = "auth.html";
 }
-
-/* ==============================
-   LOGOUT
-================================ */
-window.logout = async function () {
-  await signOut(auth);
-  window.location.href = "index.html";
-};
