@@ -1,37 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>My Library | TheoLib</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+/* ===============================
+   TotoReads / TheoLib - library.js
+   =============================== */
 
-<header class="topbar">
-  <h1>📚 My Library</h1>
-  <nav>
-    <a href="library.html">Library</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="#" id="logoutBtn">Logout</a>
-  </nav>
-</header>
+// CONFIG
+const FREE_READ_LIMIT = 2;
 
-<main class="library-section">
+// STORAGE KEYS
+const READ_COUNT_KEY = "freeReadsUsed";
+const SAVED_BOOKS_KEY = "myLibrarySaved";
+const READ_BOOKS_KEY = "myLibraryRead";
+const USER_KEY = "loggedInUser";
 
-  <section>
-    <h2>⭐ Saved Books</h2>
-    <div id="savedBooksGrid" class="library-grid"></div>
-  </section>
+// DEMO BOOK DATA (can be replaced later)
+const books = [
+  { id: 1, title: "Biology A-Level", category: "Study", thumbnail: "img/bio.jpg" },
+  { id: 2, title: "Physics O-Level", category: "Study", thumbnail: "img/phy.jpg" },
+  { id: 3, title: "African Folktales", category: "Literature", thumbnail: "img/folk.jpg" },
+  { id: 4, title: "Comic Adventures", category: "Comics", thumbnail: "img/comic.jpg" },
+  { id: 5, title: "Young Writers Hub", category: "Creativity", thumbnail: "img/write.jpg" }
+];
 
-  <section>
-    <h2>📖 Read Books</h2>
-    <div id="readBooksGrid" class="library-grid"></div>
-  </section>
+// UTILITIES
+function getStoredArray(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
 
-</main>
+function setStoredArray(key, arr) {
+  localStorage.setItem(key, JSON.stringify(arr));
+}
 
-<script type="module" src="mylibrary.js"></script>
-<script src="auth.js"></script>
+function isLoggedIn() {
+  return localStorage.getItem(USER_KEY) !== null;
+}
 
-</body>
-</html>
+// FREE READ TRACKER
+function getFreeReadsUsed() {
+  return parseInt(localStorage.getItem(READ_COUNT_KEY)) || 0;
+}
+
+function incrementFreeReads() {
+  let count = getFreeReadsUsed() + 1;
+  localStorage.setItem(READ_COUNT_KEY, count);
+}
+
+// RENDER BOOKS
+function renderLibrary() {
+  const container = document.getElementById("libraryGrid");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  books.forEach(book => {
+    const card = document.createElement("div");
+    card.className = "book-card";
+
+    card.innerHTML = `
+      <img src="${book.thumbnail}" alt="${book.title}">
+      <h3>${book.title}</h3>
+      <p class="category">${book.category}</p>
+      <div class="actions">
+        <button onclick="readBook(${book.id})">Read</button>
+        <button onclick="saveBook(${book.id})">Save</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+// READ BOOK
+window.readBook = function (bookId) {
+  const readBooks = getStoredArray(READ_BOOKS_KEY);
+
+  if (!isLoggedIn()) {
+    let used = getFreeReadsUsed();
+
+    if (used >= FREE_READ_LIMIT) {
+      alert("Login required to continue reading.");
+      window.location.href = "auth.html";
+      return;
+    }
+
+    incrementFreeReads();
+  }
+
+  if (!readBooks.includes(bookId)) {
+    readBooks.push(bookId);
+    setStoredArray(READ_BOOKS_KEY, readBooks);
+  }
+
+  alert("Book opened for reading 📖");
+};
+
+// SAVE BOOK
+window.saveBook = function (bookId) {
+  if (!isLoggedIn()) {
+    alert("Please login to save books.");
+    window.location.href = "auth.html";
+    return;
+  }
+
+  const savedBooks = getStoredArray(SAVED_BOOKS_KEY);
+
+  if (!savedBooks.includes(bookId)) {
+    savedBooks.push(bookId);
+    setStoredArray(SAVED_BOOKS_KEY, savedBooks);
+    alert("Book saved to My Library ✅");
+  } else {
+    alert("Book already saved.");
+  }
+};
+
+// INIT
+document.addEventListener("DOMContentLoaded", renderLibrary);
