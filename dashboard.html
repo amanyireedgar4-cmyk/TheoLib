@@ -1,89 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard — TheoLib</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Dashboard | TheoLib</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+    }
 
-<link rel="stylesheet" href="styles.css">
+    header {
+      background: #020617;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="library.logic.js"></script>
+    .container {
+      padding: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    h3 {
+      margin-top: 0;
+      color: #38bdf8;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      background: #38bdf8;
+      color: #020617;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #1e293b;
+      text-align: left;
+    }
+  </style>
 </head>
 
-<body onload="loadDashboard()">
+<body>
 
-<nav class="top-nav">
-  <h2>TheoLib</h2>
-  <div>
-    <a href="index.html">Home</a>
-    <a href="library.html">Library</a>
-    <a href="mylibrary.html">My Library</a>
-    <a href="dashboard.html" class="active">Dashboard</a>
+<header>
+  <h2>TheoLib Dashboard</h2>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+  <!-- STATS -->
+  <div class="grid">
+    <div class="card">
+      <h3>Total Users</h3>
+      <p id="totalUsers">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Total Books</h3>
+      <p id="totalBooks">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Authors</h3>
+      <p id="totalAuthors">0</p>
+    </div>
   </div>
-</nav>
 
-<section class="dashboard-section">
+  <br>
 
-<h1>📊 Dashboard</h1>
-<p class="subtitle">Your activity overview.</p>
+  <!-- UPLOAD BOOK -->
+  <div class="card">
+    <h3>Upload New Book (Authors)</h3>
+    <input id="bookTitle" placeholder="Book Title">
+    <input id="bookCategory" placeholder="Category (Study, Comics, etc)">
+    <input id="bookPrice" placeholder="Price (0 = free)">
+    <button onclick="uploadBook()">Upload Book</button>
+  </div>
 
-<!-- USER PANEL -->
-<div class="panel">
-  <h2>👤 Your Stats</h2>
-  <ul>
-    <li><strong>Email:</strong> <span id="userEmail">—</span></li>
-    <li><strong>Books Read:</strong> <span id="booksRead">0</span></li>
-    <li><strong>Books Saved:</strong> <span id="booksSaved">0</span></li>
-    <li><strong>Last Active:</strong> <span id="lastActive">—</span></li>
-  </ul>
+  <br>
+
+  <!-- USERS -->
+  <div class="card">
+    <h3>Registered Users</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Joined</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
+
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="panel admin hidden">
-  <h2>👑 Admin Overview</h2>
-  <ul>
-    <li><strong>Total Users:</strong> <span id="totalUsers">—</span></li>
-    <li><strong>Total Reads:</strong> <span id="totalReads">—</span></li>
-    <li><strong>Total Saves:</strong> <span id="totalSaves">—</span></li>
-    <li><strong>Top Countries:</strong> GoatCounter</li>
-    <li><strong>Devices / Browsers:</strong> GoatCounter</li>
-  </ul>
-</div>
-
-</section>
-
-<footer>
-TheoLib © 2026 · Insight before action
-</footer>
-
-<script>
-const ADMIN_EMAIL = "theolib41@gmail.com";
-
-function loadDashboard() {
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      alert("Please log in first.");
-      location.href = "auth.html";
-      return;
-    }
-
-    document.getElementById("userEmail").textContent = user.email;
-
-    db.collection("users").doc(user.uid).get().then(doc => {
-      const data = doc.data() || {};
-      document.getElementById("booksRead").textContent = (data.read || []).length;
-      document.getElementById("booksSaved").textContent = (data.saved || []).length;
-      document.getElementById("lastActive").textContent =
-        data.lastActive?.toDate().toLocaleString() || "—";
-    });
-
-    if (user.email === ADMIN_EMAIL) {
-      document.getElementById("adminPanel").classList.remove("hidden");
-    }
-  });
-}
-</script>
-
+<script src="dashboard.js"></script>
 </body>
 </html>
