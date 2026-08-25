@@ -93,5 +93,637 @@ setInterval(() => {
 }, 6000);
 </script>
 
+
+
+
+
+
+
+
+
+
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimpliTrade - P2P Trading Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --blue: #3b82f6;
+      --red: #ef4444;
+      --green: #22c55e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 3rem; }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+    }
+
+    header h1 { font-size: 1.4rem; font-weight: 700; }
+    header p { font-size: 0.8rem; color: #93c5fd; }
+
+    .user-pill {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-logout {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Auth Screens */
+    .auth-container {
+      max-width: 420px;
+      margin: 4rem auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+    }
+
+    .auth-tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .auth-tab { flex: 1; padding: 0.6rem; text-align: center; cursor: pointer; color: var(--text-muted); font-weight: 600; }
+    .auth-tab.active { color: white; border-bottom: 2px solid var(--blue); }
+
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    input, select { width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border); background: #0f172a; color: white; font-size: 0.9rem; }
+    
+    button.btn-primary { width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 0.5rem; }
+    button.btn-primary:hover { opacity: 0.9; }
+
+    /* Dashboard Layout */
+    main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+
+    .card { background: var(--card); border-radius: 8px; border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.5rem; }
+    h2 { color: #cbd5e1; margin-bottom: 1rem; font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+
+    /* Market Index Tiers */
+    .tier-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 6px; margin-bottom: 0.6rem; }
+    .badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+    .bg-yellow { background: var(--yellow); color: #000; }
+    .bg-orange { background: var(--orange); color: #fff; }
+    .bg-blue { background: var(--blue); color: #fff; }
+    .bg-red { background: var(--red); color: #fff; }
+    
+    .tag-dark { background: #7f1d1d; color: #fca5a5; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 6px; }
+
+    /* Balance Displays */
+    .cash-display { font-size: 1.8rem; font-weight: bold; color: var(--green); margin: 0.5rem 0 1rem 0; }
+    .inventory-card { background: #0f172a; border-radius: 6px; padding: 0.6rem; margin-bottom: 0.5rem; font-size: 0.85rem; display: flex; justify-content: space-between; }
+
+    /* Buttons */
+    .btn-green { background: #059669; color: white; border: none; padding: 0.65rem; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer; }
+    .btn-amber { background: #d97706; color: white; border: none; padding: 0.65rem; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer; }
+    
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 0.65rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-weight: 600; }
+
+    /* Modal System */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 100; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 10px; width: 90%; max-width: 420px; padding: 1.5rem; text-align: center; }
+    .modal-btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+    .modal-btns button { flex: 1; padding: 0.6rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+    .btn-cancel { background: #475569; color: white; }
+
+    #appView { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- AUTHENTICATION FORM -->
+  <div id="authView">
+    <div class="auth-container">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</div>
+        <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Create Account</div>
+      </div>
+
+      <div id="authForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="authEmail" placeholder="Enter your email...">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="authPassword" placeholder="••••••••">
+        </div>
+        <button class="btn-primary" onclick="submitAuth()" id="authSubmitBtn">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP PLATFORM -->
+  <div id="appView">
+    <header>
+      <div>
+        <h1>SimpliTrade Portal</h1>
+        <p>Valuation-Bracketed P2P Coin Exchange</p>
+      </div>
+      <div class="user-pill">
+        <span id="currentUserTag"></span>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        
+        <!-- Live Market Summary & Analytics -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2>Live Coin Market Indexes & Trends</h2>
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; align-items: center;">
+            <div id="marketIndexContainer"></div>
+            <div style="height: 220px;">
+              <canvas id="marketChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallet & Inventory -->
+        <div class="card">
+          <h2>My Wallet Balance</h2>
+          <div class="cash-display" id="userCashDisplay">0 UGX</div>
+
+          <h2>My Portfolio (Owned Coins)</h2>
+          <div id="userInventoryContainer"></div>
+        </div>
+
+        <!-- Trader Action Portal -->
+        <div class="card" id="tradingPortalCard">
+          <h2>Trading Terminal</h2>
+
+          <!-- Buy Action -->
+          <div class="form-group">
+            <label>Select Coin Tier to Buy</label>
+            <select id="buyTierSelect">
+              <option value="Yellow">Yellow Coin (1k - 10k)</option>
+              <option value="Orange">Orange Coin (10k - 30k)</option>
+              <option value="Blue">Blue Coin (30k - 50k)</option>
+              <option value="Red">Red Coin (50k+)</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="confirmBuyCoin()">Buy at Market Average Price</button>
+
+          <hr style="border-color: var(--border); margin: 1.25rem 0;">
+
+          <!-- Proof Selling Action -->
+          <div class="form-group">
+            <label>Select Coin to Sell (Proof Selling)</label>
+            <select id="sellCoinSelect"></select>
+          </div>
+          <div class="form-group">
+            <label>Your Asking Price (UGX)</label>
+            <input type="number" id="sellAskPrice" placeholder="Enter your sell target...">
+          </div>
+          <button class="btn-green" onclick="confirmListCoin()">Post to Selling Portal</button>
+        </div>
+
+        <!-- Light Selling (Tier Upgrade) -->
+        <div class="card">
+          <h2>Light Selling (Tier-Up Exchange)</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            If your coins enter a <strong>Dark Age</strong> (hit ceiling price where trade profit = 0), swap them into a higher 2nd-grade coin!
+          </p>
+          <div class="form-group">
+            <label>Select Consolidation Pair</label>
+            <select id="lightSellTierSelect">
+              <option value="Yellow">3 Dark Yellow → 1 New Orange</option>
+              <option value="Orange">3 Dark Orange → 1 New Blue</option>
+              <option value="Blue">2 Dark Blue → 1 New Red</option>
+            </select>
+          </div>
+          <button class="btn-amber" onclick="confirmLightSelling()">Execute Tier Upgrade</button>
+        </div>
+
+        <!-- Admin View vs. Trader Private View -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2 id="portalSectionTitle">Selling Portal Activity</h2>
+          <div id="portalTableContainer"></div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- CONFIRMATION / ACTION CANCEL MODAL -->
+  <div class="modal-overlay" id="actionModal">
+    <div class="modal">
+      <h3 id="modalTitle" style="color: #fff; margin-bottom: 0.5rem;">Confirm Action</h3>
+      <p id="modalMessage" style="font-size: 0.9rem; color: var(--text-muted);"></p>
+      <div class="modal-actions modal-btns">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" id="modalConfirmBtn">Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_EMAIL = "amanyireedgar4@gmail.com";
+    
+    // Tier Definitions & Pricing Limits
+    const TIER_RULES = {
+      Yellow: { min: 1000, max: 10000, darkAge: 8000, ratio: 3, next: 'Orange', color: '#eab308' },
+      Orange: { min: 10000, max: 30000, darkAge: 28000, ratio: 3, next: 'Blue', color: '#f97316' },
+      Blue:   { min: 30000, max: 50000, darkAge: 48000, ratio: 2, next: 'Red', color: '#3b82f6' },
+      Red:    { min: 50000, max: 100000, darkAge: 90000, ratio: 0, next: null, color: '#ef4444' }
+    };
+
+    // Shared Application State
+    let database = {
+      users: {
+        "amanyireedgar4@gmail.com": { pass: "admin123", role: "Admin", cash: 0, inventory: [] },
+        "trader1@test.com": { 
+          pass: "123456", 
+          role: "Trader", 
+          cash: 50000, 
+          inventory: [{ id: 'c1', tier: 'Yellow', buyPrice: 4000 }] 
+        },
+        "trader2@test.com": { 
+          pass: "123456", 
+          role: "Trader", 
+          cash: 60000, 
+          inventory: [
+            { id: 'c2', tier: 'Yellow', buyPrice: 8500 },
+            { id: 'c3', tier: 'Yellow', buyPrice: 8200 },
+            { id: 'c4', tier: 'Yellow', buyPrice: 8800 }
+          ] 
+        }
+      },
+      orderBook: [
+        { offerId: 101, seller: "trader1@test.com", coinId: 'ext_1', tier: "Yellow", buyPrice: 3000, askPrice: 5000 },
+        { offerId: 102, seller: "trader2@test.com", coinId: 'ext_2', tier: "Yellow", buyPrice: 4500, askPrice: 8000 }
+      ]
+    };
+
+    let activeUserEmail = null;
+    let authMode = 'login';
+    let chartInstance = null;
+
+    // Auth Screen Handlers
+    function switchAuthTab(mode) {
+      authMode = mode;
+      document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+      document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Sign In' : 'Register Account';
+    }
+
+    function submitAuth() {
+      let email = document.getElementById('authEmail').value.trim().toLowerCase();
+      let pass = document.getElementById('authPassword').value;
+
+      if (!email || !pass) { alert("Please enter both email and password."); return; }
+
+      if (authMode === 'register') {
+        if (database.users[email]) {
+          alert("An account with this email already exists!");
+          return;
+        }
+        let isSystemAdmin = (email === ADMIN_EMAIL);
+        database.users[email] = {
+          pass: pass,
+          role: isSystemAdmin ? "Admin" : "Trader",
+          cash: isSystemAdmin ? 0 : 50000, // Startup bonus cash for new traders
+          inventory: []
+        };
+        alert(`Account created successfully! ${isSystemAdmin ? 'Admin Access Granted.' : 'You received 50,000 UGX startup cash!'}`);
+      } else {
+        if (!database.users[email] || database.users[email].pass !== pass) {
+          alert("Invalid email or password.");
+          return;
+        }
+      }
+
+      activeUserEmail = email;
+      document.getElementById('authView').style.display = 'none';
+      document.getElementById('appView').style.display = 'block';
+      
+      initChart();
+      renderApp();
+    }
+
+    function logout() {
+      activeUserEmail = null;
+      document.getElementById('authView').style.display = 'block';
+      document.getElementById('appView').style.display = 'none';
+    }
+
+    // Modal Helper Function
+    function promptModal(title, msg, onConfirm) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalMessage').innerText = msg;
+      let confirmBtn = document.getElementById('modalConfirmBtn');
+      
+      confirmBtn.onclick = () => {
+        onConfirm();
+        closeModal();
+      };
+      document.getElementById('actionModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('actionModal').classList.remove('active');
+    }
+
+    // Market Engine Mechanics
+    function getTierAverages() {
+      let averages = {};
+      for (let tier in TIER_RULES) {
+        let activeOffers = database.orderBook.filter(o => o.tier === tier);
+        if (activeOffers.length > 0) {
+          let total = activeOffers.reduce((sum, o) => sum + o.askPrice, 0);
+          averages[tier] = Math.round(total / activeOffers.length);
+        } else {
+          averages[tier] = Math.round((TIER_RULES[tier].min + TIER_RULES[tier].max) / 2);
+        }
+      }
+      return averages;
+    }
+
+    // Core Rendering System
+    function renderApp() {
+      let user = database.users[activeUserEmail];
+      let averages = getTierAverages();
+
+      // Set Header User Status
+      document.getElementById('currentUserTag').innerHTML = `
+        <strong>${activeUserEmail}</strong> (${user.role === 'Admin' ? '<span style="color:#f87171;">System Admin</span>' : 'Trader'})
+      `;
+
+      // 1. Render Market Index Tiers
+      let indexHTML = '';
+      for (let tier in TIER_RULES) {
+        let rule = TIER_RULES[tier];
+        let avg = averages[tier];
+        let isDark = avg >= rule.darkAge;
+
+        indexHTML += `
+          <div class="tier-row">
+            <div>
+              <span class="badge bg-${tier.toLowerCase()}">${tier}</span>
+              ${isDark ? '<span class="tag-dark">DARK AGE</span>' : ''}
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Range: ${rule.min/1000}k - ${rule.max/1000}k</div>
+            </div>
+            <div style="text-align:right;">
+              <strong style="font-size:1.05rem; color:white;">${avg.toLocaleString()} UGX</strong>
+              <div style="font-size:0.7rem; color:var(--text-muted);">Current Selling Avg</div>
+            </div>
+          </div>
+        `;
+      }
+      document.getElementById('marketIndexContainer').innerHTML = indexHTML;
+
+      // 2. Render Wallet Balance & Inventory
+      document.getElementById('userCashDisplay').innerText = `${user.cash.toLocaleString()} UGX`;
+      
+      let invHTML = '';
+      let sellOptionsHTML = '';
+      user.inventory.forEach(item => {
+        let isDark = item.buyPrice >= TIER_RULES[item.tier].darkAge;
+        invHTML += `
+          <div class="inventory-card">
+            <span><strong style="color:white;">${item.tier} Coin</strong> (${item.id})</span>
+            <span>Bought: ${item.buyPrice.toLocaleString()} UGX ${isDark ? '<span class="tag-dark">Dark</span>' : ''}</span>
+          </div>
+        `;
+        sellOptionsHTML += `<option value="${item.id}">${item.tier} - Cost: ${item.buyPrice} UGX</option>`;
+      });
+
+      document.getElementById('userInventoryContainer').innerHTML = invHTML || '<p style="font-size:0.8rem; color:gray;">No coins owned in portfolio.</p>';
+      document.getElementById('sellCoinSelect').innerHTML = sellOptionsHTML || '<option value="">No available coins</option>';
+
+      // 3. Render Order Book Table (Admin vs Private View)
+      if (user.role === 'Admin') {
+        document.getElementById('portalSectionTitle').innerText = "Admin Database: All Live Selling Portal Listings & Activity";
+        let table = `<table><thead><tr><th>Seller Email</th><th>Coin Tier</th><th>Buy-In Cost</th><th>Requested Ask</th><th>Actions</th></tr></thead><tbody>`;
+        database.orderBook.forEach(o => {
+          table += `
+            <tr>
+              <td>${o.seller}</td>
+              <td><span class="badge bg-${o.tier.toLowerCase()}">${o.tier}</span></td>
+              <td>${o.buyPrice.toLocaleString()} UGX</td>
+              <td><strong>${o.askPrice.toLocaleString()} UGX</strong></td>
+              <td><button style="background:#dc2626; border:none; color:white; padding:3px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;" onclick="adminDelistOffer(${o.offerId})">Force Delist</button></td>
+            </tr>
+          `;
+        });
+        table += `</tbody></table>`;
+        document.getElementById('portalTableContainer').innerHTML = table || '<p style="font-size:0.88rem; color:gray;">No listings in database.</p>';
+      } else {
+        document.getElementById('portalSectionTitle').innerText = "My Active Portal Sales";
+        let myListings = database.orderBook.filter(o => o.seller === activeUserEmail);
+        let table = `<table><thead><tr><th>Coin Tier</th><th>Buy Cost</th><th>My Requested Price</th><th>Status</th></tr></thead><tbody>`;
+        myListings.forEach(o => {
+          table += `
+            <tr>
+              <td><span class="badge bg-${o.tier.toLowerCase()}">${o.tier}</span></td>
+              <td>${o.buyPrice.toLocaleString()} UGX</td>
+              <td><strong>${o.askPrice.toLocaleString()} UGX</strong></td>
+              <td><span style="color:var(--yellow); font-weight:bold;">Listed on Portal</span></td>
+            </tr>
+          `;
+        });
+        table += `</tbody></table>`;
+        document.getElementById('portalTableContainer').innerHTML = table || '<p style="font-size:0.8rem; color:gray;">You have no active sale listings posted.</p>';
+      }
+
+      updateChart();
+    }
+
+    // Buying Transaction Logic (Automated Market Average Execution)
+    function confirmBuyCoin() {
+      let tier = document.getElementById('buyTierSelect').value;
+      let averages = getTierAverages();
+      let avgPrice = averages[tier];
+      let buyer = database.users[activeUserEmail];
+
+      promptModal("Confirm Coin Purchase", `Do you want to buy a ${tier} coin at the current average market price of ${avgPrice.toLocaleString()} UGX?`, () => {
+        if (buyer.cash < avgPrice) {
+          alert("Purchase Failed: Insufficient cash balance in wallet!");
+          return;
+        }
+
+        // Deduct market price from buyer cash
+        buyer.cash -= avgPrice;
+
+        // Match against existing sellers asking <= average price
+        let matchIndex = database.orderBook.findIndex(o => o.tier === tier && o.askPrice <= avgPrice);
+
+        if (matchIndex !== -1) {
+          let matchedOffer = database.orderBook[matchIndex];
+          let sellerRequestedPrice = matchedOffer.askPrice;
+          let adminProfitMargin = avgPrice - sellerRequestedPrice;
+
+          // 1. Seller gets exact requested amount returned to cash balance
+          database.users[matchedOffer.seller].cash += sellerRequestedPrice;
+
+          // 2. Admin receives exact excess profit margin
+          database.users[ADMIN_EMAIL].cash += adminProfitMargin;
+
+          // Remove filled offer from portal
+          database.orderBook.splice(matchIndex, 1);
+        }
+
+        // Add coin to buyer inventory
+        buyer.inventory.push({
+          id: 'c_' + Math.floor(Math.random() * 8999 + 1000),
+          tier: tier,
+          buyPrice: avgPrice
+        });
+
+        renderApp();
+      });
+    }
+
+    // Proof Selling Logic
+    function confirmListCoin() {
+      let coinId = document.getElementById('sellCoinSelect').value;
+      let askPrice = parseFloat(document.getElementById('sellAskPrice').value);
+      let user = database.users[activeUserEmail];
+
+      if (!coinId) { alert("Please select a coin from your portfolio to sell."); return; }
+      if (!askPrice || askPrice <= 0) { alert("Please enter a valid asking price."); return; }
+
+      let invIndex = user.inventory.findIndex(c => c.id === coinId);
+      let coin = user.inventory[invIndex];
+
+      if (askPrice > TIER_RULES[coin.tier].max) {
+        alert(`Asking price cannot exceed tier maximum limit (${TIER_RULES[coin.tier].max.toLocaleString()} UGX).`);
+        return;
+      }
+
+      promptModal("Confirm Sale Listing", `Do you want to post your ${coin.tier} coin to the portal for ${askPrice.toLocaleString()} UGX?`, () => {
+        database.orderBook.push({
+          offerId: Date.now(),
+          seller: activeUserEmail,
+          coinId: coin.id,
+          tier: coin.tier,
+          buyPrice: coin.buyPrice,
+          askPrice: askPrice
+        });
+
+        // Move coin out of available inventory while listed on portal
+        user.inventory.splice(invIndex, 1);
+        document.getElementById('sellAskPrice').value = '';
+        renderApp();
+      });
+    }
+
+    // Light Selling / Tier Upgrade Logic
+    function confirmLightSelling() {
+      let sourceTier = document.getElementById('lightSellTierSelect').value;
+      let rule = TIER_RULES[sourceTier];
+      let user = database.users[activeUserEmail];
+
+      // Identify eligible dark aged coins owned by user
+      let darkCoins = user.inventory.filter(c => c.tier === sourceTier && c.buyPrice >= rule.darkAge);
+
+      if (darkCoins.length < rule.ratio) {
+        alert(`Upgrade Failed: You need at least ${rule.ratio} Dark-Aged ${sourceTier} coins. You currently have ${darkCoins.length}.`);
+        return;
+      }
+
+      promptModal("Confirm Light Selling Upgrade", `Swap ${rule.ratio} Dark-Aged ${sourceTier} coins for 1 new 2nd-grade ${rule.next} coin?`, () => {
+        let removed = 0;
+        user.inventory = user.inventory.filter(c => {
+          if (c.tier === sourceTier && c.buyPrice >= rule.darkAge && removed < rule.ratio) {
+            removed++;
+            return false;
+          }
+          return true;
+        });
+
+        // Auto-mint next tier coin
+        let targetMin = TIER_RULES[rule.next].min;
+        user.inventory.push({
+          id: 'up_' + Math.floor(Math.random() * 8999 + 1000),
+          tier: rule.next,
+          buyPrice: targetMin
+        });
+
+        renderApp();
+      });
+    }
+
+    function adminDelistOffer(offerId) {
+      let idx = database.orderBook.findIndex(o => o.offerId === offerId);
+      if (idx !== -1) {
+        let offer = database.orderBook[idx];
+        // Return coin back to trader inventory
+        database.users[offer.seller].inventory.push({ id: offer.coinId, tier: offer.tier, buyPrice: offer.buyPrice });
+        database.orderBook.splice(idx, 1);
+        renderApp();
+      }
+    }
+
+    // Live Value Chart Analytics
+    function initChart() {
+      let ctx = document.getElementById('marketChart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['T-20', 'T-15', 'T-10', 'T-5', 'Live'],
+          datasets: [
+            { label: 'Yellow Tier', data: [3000, 4000, 4500, 5500, 6000], borderColor: TIER_RULES.Yellow.color, tension: 0.3 },
+            { label: 'Orange Tier', data: [12000, 14000, 16000, 18000, 20000], borderColor: TIER_RULES.Orange.color, tension: 0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
+          }
+        }
+      });
+    }
+
+    function updateChart() {
+      if (!chartInstance) return;
+      let avgs = getTierAverages();
+      chartInstance.data.datasets[0].data[4] = avgs.Yellow;
+      chartInstance.data.datasets[1].data[4] = avgs.Orange;
+      chartInstance.update();
+    }
+  </script>
+</body>
+</html>
 </body>
 </html>
